@@ -318,3 +318,87 @@ Traceback (most recent call last):
   File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
     raise FeatureNotFound(
 bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: invalid literal for int() with base 10: '292030,378649,378648'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '292030,378649,378648'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '872410,1427650'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '872410,1427650'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '2131630,2131640,2131650,2131680,2306740'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '2131630,2131640,2131650,2131680,2306740'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '534380,1537624,2210190'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '534380,1537624,2210190'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1196590,1236300,1456360,1731080'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1196590,1236300,1456360,1731080'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1798010,1798020'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1798010,1798020'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '379430,768530,836900,883150,921950,977420,1033890'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '379430,768530,836900,883150,921950,977420,1033890'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '287700,311340,406540,406560,406580,406590,406600,406610,406620,436030,436040,436050,437230,437231'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '287700,311340,406540,406560,406580,406590,406600,406610,406620,436030,436040,436050,437230,437231'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '489830,1746860'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '489830,1746860'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '377160,435870,435880,435881,480630,480631,490650'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '377160,435870,435880,435881,480630,480631,490650'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '418370,529930,530610,530611,540340,564190,1196590,1236300,1456360,1731080'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '418370,529930,530610,530611,540340,564190,1196590,1236300,1456360,1731080'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '976310,1054480,1273971,1449880'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '976310,1054480,1273971,1449880'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '356190,716270,241930,318550'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '356190,716270,241930,318550'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '35140,200260,208650,367480'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '35140,200260,208650,367480'

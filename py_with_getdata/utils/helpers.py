@@ -97,7 +97,7 @@ def create_schema(db: mysql.connections.Connection) -> None:
         >>> create_schema(db)
         None
     """
-    with open(r"D:\pycharm_pro\database-lab\Steam_create.sql", mode="r", encoding="utf-8") as file:
+    with open(r"Steam_create.sql", mode="r", encoding="utf-8") as file:
         create_database_sql = file.read()
     cursor = db.cursor()
     try:

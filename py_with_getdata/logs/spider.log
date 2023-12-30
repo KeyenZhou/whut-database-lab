@@ -1,0 +1,320 @@
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+ERROR:root:An error occurred: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 38, in get_game_library
+    soup = BeautifulSoup(response.text, 'lxml')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\bs4\__init__.py", line 250, in __init__
+    raise FeatureNotFound(
+bs4.FeatureNotFound: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?

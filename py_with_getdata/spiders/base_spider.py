@@ -21,7 +21,7 @@ from utils.helpers import find_appid_in_game_library
 from utils.helpers import parse_date
 import logging
 
-logging.basicConfig(filename='../logs/spider.log', level=logging.ERROR)
+logging.basicConfig(filename=r'logs/spider.log', level=logging.ERROR)
 
 
 def get_game_library(db: mysql.connections):

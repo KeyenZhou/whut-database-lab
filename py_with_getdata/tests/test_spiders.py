@@ -1,22 +1,25 @@
-# 测试点击:
-from selenium.common import TimeoutException
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import time
-import requests
-from bs4 import BeautifulSoup
-from config import web_config
-from config import url_config
-from spiders.base_spider import static_content
-import pymysql as mysql
-from config import db_config
-from spiders.base_spider import static_content
+# # 测试点击:
+# from selenium.common import TimeoutException
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.support.select import Select
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
+# import time
+# import requests
+# from bs4 import BeautifulSoup
+# from config import web_config
+# from config import url_config
+# from spiders.base_spider import static_content
+# import pymysql as mysql
+# from config import db_config
+# from spiders.base_spider import static_content
+#
+# db = mysql.connect(**db_config)
+# static_content(db, 971650)
 
-db = mysql.connect(**db_config)
-static_content(db, 971650)
+from lxml import etree
+print(etree.LXML_VERSION)
 
 
 def test():

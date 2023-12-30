@@ -53,6 +53,15 @@ QString Translation::get_lable()
 
 /*----------------------------------------------User----------------------------------------------*/
 
+QSqlQuery* User::get_query()
+{
+    return &query;
+}
+QSqlDatabase* User::get_connect_to_steam()
+{
+    return &connect_to_steam;
+}
+
 User::User()
 {
     connect_to_steam = QSqlDatabase::addDatabase("QODBC");
@@ -128,8 +137,8 @@ int User::user_register(QString user_account,QString user_password,QString user_
         return 1;
     }
 
-    QString user_register_sql = "insert into user (user_account,user_password,user_gender,user_email) \n"
-                                "values(:user_account,:user_password,:user_gender,:user_email);";
+    QString user_register_sql = "insert into user(user_account,user_password,user_gender,user_email) \n"
+                                "value(:user_account,:user_password,:user_gender,:user_email);";
     query.prepare(user_register_sql);
     query.bindValue(":user_account",user_account);
     query.bindValue(":user_password",user_password);
@@ -434,7 +443,10 @@ int User::delete_user_label(QString label_name)
 
 }
 
-/*----------------------------------------------Qquery_to_database----------------------------------------------*/
+
+//--------------------------------------------------------------------------------------------------------------
+
+
 
 //初始化
 Qquery_to_database::Qquery_to_database()
@@ -445,7 +457,7 @@ Qquery_to_database::Qquery_to_database()
 //析构
 Qquery_to_database::~Qquery_to_database()
 {
-    connect_to_stream.close();
+    connect_to_stream->close();
     for(auto a:information_game_sequence)
     {
         std::free(a);
@@ -495,22 +507,25 @@ void Qquery_to_database::initialization()
 }
 
 //连接数据库
-bool Qquery_to_database::connection()
+bool Qquery_to_database::connection(User* user)
 {
-    connect_to_stream = QSqlDatabase::addDatabase("QODBC");
-    connect_to_stream.setHostName("127.0.0.1");
-    connect_to_stream.setPort(3306);
-    connect_to_stream.setDatabaseName("steam");
-    connect_to_stream.setUserName("root");
-    connect_to_stream.setPassword("wangisgreat.0525");
-    query=QSqlQuery(connect_to_stream);
-    return connect_to_stream.open();
+    // connect_to_stream = QSqlDatabase::addDatabase("QODBC");
+    // connect_to_stream->setHostName("127.0.0.1");
+    // connect_to_stream->setPort(3306);
+    // connect_to_stream->setDatabaseName("steam");
+    // connect_to_stream->setUserName("root");
+    // connect_to_stream->setPassword("wangisgreat.0525");
+    // query=QSqlQuery(connect_to_stream);
+    // return connect_to_stream->open();
+
+    query=user->get_query();
+    connect_to_stream=user->get_connect_to_steam();
 }
 
 
 // QFuture<void> future= QtConcurrent::run([this]{
-//     query.exec("select * from tableone where GameName like '%car%' limit 9");
-//     size_of_result=query.numRowsAffected();
+//     query->exec("select * from tableone where GameName like '%car%' limit 9");
+//     size_of_result=query->numRowsAffected();
 //     qDebug()<<size_of_result<<"\n";
 // });
 // qDebug()<<size_of_result<<"\n";
@@ -522,39 +537,39 @@ bool Qquery_to_database::connection()
 
 bool Qquery_to_database::add_label_query_time(QString label)
 {
-    query.exec(transaction_begin);
+    query->exec(transaction_begin);
     QString add_label_query_time_sql="update tag,(select tag_id from tag where tag_name=:label) as a\n"
                                        "set tag.tag_times=tag.tag_times+1 where tag.tag_id =a.tag_id;";
-    query.prepare(add_label_query_time_sql);
-    query.bindValue(":label",label);
-    if(query.exec())
+    query->prepare(add_label_query_time_sql);
+    query->bindValue(":label",label);
+    if(query->exec())
     {
-        query.exec(transaction_submission);
+        query->exec(transaction_submission);
         return true;
     }
-    query.exec(transaction_rollback);
+    query->exec(transaction_rollback);
     return false;
 }
 
 int Qquery_to_database::main_query(QString label,int user_id)
 {
     main_query_sql.clear();
-    query.clear();
+    query->clear();
     for(auto a:(brief_information_of_game_list[0])) std::free(a);
     std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[0]);
 
     size_of_result=0;
 
-    query.exec(transaction_begin);
+    query->exec(transaction_begin);
 
 
-    query.exec("select tag_id from tag where tag_name = :label and user_id=:user_id;");
-    query.bindValue(":label",label);
-    query.bindValue(":user_id",user_id);
-    query.exec();
-    if(query.numRowsAffected()==0)
+    query->exec("select tag_id from tag where tag_name = :label and user_id=:user_id;");
+    query->bindValue(":label",label);
+    query->bindValue(":user_id",user_id);
+    query->exec();
+    if(query->numRowsAffected()==0)
     {
-        query.exec(transaction_submission);
+        query->exec(transaction_submission);
         return 0;
     }
 
@@ -566,20 +581,20 @@ int Qquery_to_database::main_query(QString label,int user_id)
                          "(select tag_id from tag where tag_name = :label and user_id=:user_id) as a\n"
                          "where a.tag_id=game_to_tag.tag_id) as b\n"
                          "where b.AppID=game.AppID;";
-        query.prepare(main_query_sql);
-        query.bindValue(":label",label);
-        query.bindValue(":user_id",user_id);
-        query.exec();
+        query->prepare(main_query_sql);
+        query->bindValue(":label",label);
+        query->bindValue(":user_id",user_id);
+        query->exec();
     }
     else
     {
         main_query_sql = "select AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date\n"
                          "from game limit 25;";
-        query.prepare(main_query_sql);
-        query.exec();
+        query->prepare(main_query_sql);
+        query->exec();
     }
     create_information_of_game(0);
-    query.exec(transaction_submission);
+    query->exec(transaction_submission);
 
     add_label_query_time(label);
     return 1;
@@ -601,13 +616,13 @@ bool Qquery_to_database::label_filter_query(QString lable)
     }
 
     label_query_sql.clear();
-    query.clear();
+    query->clear();
     for(auto a:(brief_information_of_game_list[4])) std::free(a);
     std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[4]);
 
     size_of_label_query=0;
 
-    query.exec(transaction_begin);
+    query->exec(transaction_begin);
     label_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date from game,\n"
                       "(select distinct AppID from game_to_tag,\n"
                       "(select tag_id from tag where 1=1";
@@ -620,15 +635,15 @@ bool Qquery_to_database::label_filter_query(QString lable)
     label_query_sql=label_query_sql + ") as a\n"
                                         "where a.tag_id=game_to_tag.tag_id) as b\n"
                                         "where game.AppID=b.AppID;";
-    query.prepare(label_query_sql);
+    query->prepare(label_query_sql);
     for(int i=0;i<=mark;i++)
     {
-        query.bindValue(parameter_label_list[i],lable_list[i]);
+        query->bindValue(parameter_label_list[i],lable_list[i]);
     }
-    query.exec();
-    size_of_label_query=query.numRowsAffected();
+    query->exec();
+    size_of_label_query=query->numRowsAffected();
     create_information_of_game(4);
-    query.exec(transaction_submission);
+    query->exec(transaction_submission);
     date_sort();
     date_desc_sort();
     price_sort_ascend();
@@ -641,9 +656,9 @@ bool Qquery_to_database::label_filter_query(QString lable)
 bool Qquery_to_database::ranking_query(int index,QString date)
 {
     ranking_query_sql.clear();
-    query.clear();
+    query->clear();
 
-    query.exec(transaction_begin);
+    query->exec(transaction_begin);
 
     QDate time;
     if(index==0)
@@ -666,9 +681,9 @@ bool Qquery_to_database::ranking_query(int index,QString date)
                             "FROM `week_rank` wr WHERE wr.`Date` = :time) as b\n"
                             "where b.AppID=game.AppID\n"
                             "ORDER BY `rank`;";
-        query.prepare(ranking_query_sql);
-        query.bindValue(":time",time);
-        query.exec();
+        query->prepare(ranking_query_sql);
+        query->bindValue(":time",time);
+        query->exec();
         create_information_of_game(1);
     }
 
@@ -681,9 +696,9 @@ bool Qquery_to_database::ranking_query(int index,QString date)
         ranking_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date from game,\n"
                             "(select AppID from month_rank where Date=:time) as a\n"
                             "where a.AppID=game.AppID;";
-        query.prepare(ranking_query_sql);
-        query.bindValue(":time",time);
-        query.exec();
+        query->prepare(ranking_query_sql);
+        query->bindValue(":time",time);
+        query->exec();
         create_information_of_game(2);
     }
 
@@ -696,33 +711,33 @@ bool Qquery_to_database::ranking_query(int index,QString date)
         ranking_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date,a.category from game,\n"
                             "(select AppID,category from year_rank where Date='2022-01-01') as a\n"
                             "where a.AppID=game.AppID;";
-        query.prepare(ranking_query_sql);
-        query.bindValue(":time",time);
-        query.exec();
+        query->prepare(ranking_query_sql);
+        query->bindValue(":time",time);
+        query->exec();
         create_information_of_game(3);
     }
 
-    query.exec(transaction_submission);
+    query->exec(transaction_submission);
 
     return true;
 }
 
 bool Qquery_to_database::new_product_query()
 {
-    query.clear();
+    query->clear();
     for(auto a:(brief_information_of_game_list[6])) std::free(a);
     std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[6]);
 
-    query.exec(transaction_begin);
+    query->exec(transaction_begin);
     new_product_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date\n"
                             "FROM `game`\n"
                             "WHERE `issue_date` >=\n"
                             "DATE_FORMAT(DATE_SUB((SELECT `issue_date` FROM `game` ORDER BY `issue_date` DESC LIMIT 1), INTERVAL 2 MONTH), '%Y-%m-01')\n"
                             "ORDER BY `issue_date` DESC;";
-    query.prepare(new_product_query_sql);
-    query.exec();
+    query->prepare(new_product_query_sql);
+    query->exec();
     create_information_of_game(6);
-    query.exec(transaction_submission);
+    query->exec(transaction_submission);
     return true;
 }
 
@@ -734,10 +749,10 @@ bool Qquery_to_database::preferential_query(QString discount)
         if('0'<=a and a<='9') disc.append(a);
     }
     double dis=disc.toDouble()/100;
-    query.clear();
+    query->clear();
     size_of_preferential_query=0;
 
-    query.exec(transaction_begin);
+    query->exec(transaction_begin);
 
     preferential_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date\n"
                              "FROM `game`\n"
@@ -747,37 +762,37 @@ bool Qquery_to_database::preferential_query(QString discount)
                              "ORDER BY\n"
                              "CAST(SUBSTRING_INDEX(`new_price`, 'S$', -1) AS DECIMAL(10, 2)) /\n"
                              "CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2)) ASC;";
-    query.prepare(preferential_query_sql);
-    query.bindValue(":discount",dis);
-    query.exec();
+    query->prepare(preferential_query_sql);
+    query->bindValue(":discount",dis);
+    query->exec();
     create_information_of_game(7);
-    query.exec(transaction_submission);
+    query->exec(transaction_submission);
     return true;
 }
 
 Detail_information_of_game Qquery_to_database::get_detail_information_of_game(int appid)
 {
-    query.exec(transaction_begin);
+    query->exec(transaction_begin);
 
-    query.clear();
+    query->clear();
     QString detail_information_query_sql = "select AppID,game_name,os,game_intro_img,Recent_reviews,All_reviews,\n"
                                            "Old_price,New_price,issue_date,developer_id,publisher_id from game_details \n"
                                            "where AppID=:appid";
-    query.prepare(detail_information_query_sql);
-    query.bindValue(":appid",appid);
-    query.exec();
+    query->prepare(detail_information_query_sql);
+    query->bindValue(":appid",appid);
+    query->exec();
     Detail_information_of_game a;
-    query.next();
+    query->next();
 
-    a.brief.appid=query.value("AppID").toInt();
-    a.brief.image_URL=query.value("game_intro_img").toString();
-    a.brief.name=query.value("game_name").toString();
-    a.brief.support_os=analysis_os(query.value("os").toString());
-    a.brief.shelves_time=query.value("issue_date").toDate();
+    a.brief.appid=query->value("AppID").toInt();
+    a.brief.image_URL=query->value("game_intro_img").toString();
+    a.brief.name=query->value("game_name").toString();
+    a.brief.support_os=analysis_os(query->value("os").toString());
+    a.brief.shelves_time=query->value("issue_date").toDate();
     a.brief.date=a.brief.shelves_time.toString("yyyy-MM-dd");
-    analysis_reviews(&(a.brief),query.value("All_reviews").toString());
-    a.brief.new_price=query.value("New_price").toString().remove("S$").toDouble();
-    a.brief.old_price=query.value("Old_price").toString().remove("S$").toDouble();
+    analysis_reviews(&(a.brief),query->value("All_reviews").toString());
+    a.brief.new_price=query->value("New_price").toString().remove("S$").toDouble();
+    a.brief.old_price=query->value("Old_price").toString().remove("S$").toDouble();
     int discount=(a.brief.old_price-a.brief.new_price)*100/a.brief.old_price;
     a.brief.discount="-"+QString::number(discount)+"%";
     a.brief.discount_rate=discount*1.0/100;
@@ -785,7 +800,7 @@ Detail_information_of_game Qquery_to_database::get_detail_information_of_game(in
     QString positive_rating;
     QString number_of_comments;
     bool digit=true;
-    for(auto i:query.value("Recent_reviews").toString())
+    for(auto i:query->value("Recent_reviews").toString())
     {
         if(i>='0'&&i<='9'&&digit)
         {
@@ -802,7 +817,7 @@ Detail_information_of_game Qquery_to_database::get_detail_information_of_game(in
     a.additional.number_negative_reviews=(a.additional.number_positive_reviews/a.additional.favorable_comparison)*(1-a.additional.favorable_comparison);
     a.additional.positive_rate=positive_rating+"%";
 
-    a.additional.system_configuration_list=query.value("os").toString().split("#");
+    a.additional.system_configuration_list=query->value("os").toString().split("#");
 
     if(a.brief.favorable_comparison>=0.95)     a.additional.evaluate="好评如潮";
     else if(a.brief.favorable_comparison>=0.8) a.additional.evaluate="特别好评";
@@ -811,34 +826,34 @@ Detail_information_of_game Qquery_to_database::get_detail_information_of_game(in
     else if(a.brief.favorable_comparison>=0.2) a.additional.evaluate="多半差评";
     else if(a.brief.favorable_comparison>=0  ) a.additional.evaluate="差评如潮";
 
-    int publisher_id=query.value("publisher_id").toInt();
-    int developer_id=query.value("developer_id").toInt();
+    int publisher_id=query->value("publisher_id").toInt();
+    int developer_id=query->value("developer_id").toInt();
 
     QString get_publisher_name="select developer_name from dev_pub_er where dev_pub_id=:id";
-    query.prepare(get_publisher_name);
-    query.bindValue(":id",publisher_id);
-    query.exec();
-    query.next();
-    a.additional.publisher=query.value("developer_name").toString();
+    query->prepare(get_publisher_name);
+    query->bindValue(":id",publisher_id);
+    query->exec();
+    query->next();
+    a.additional.publisher=query->value("developer_name").toString();
 
-    query.prepare(get_publisher_name);
-    query.bindValue(":id",developer_id);
-    query.exec();
-    query.next();
-    a.additional.developer=query.value("developer_name").toString();
+    query->prepare(get_publisher_name);
+    query->bindValue(":id",developer_id);
+    query->exec();
+    query->next();
+    a.additional.developer=query->value("developer_name").toString();
 
     QString get_game_label = "select tag_name from tag,\n"
                              "(select tag_id from game_to_tag where AppID=:AppID) as a\n"
                              "where a.tag_id=tag.tag_id;";
-    query.prepare(get_game_label);
-    query.bindValue(":AppID",a.brief.appid);
-    query.exec();
-    while(query.next())
+    query->prepare(get_game_label);
+    query->bindValue(":AppID",a.brief.appid);
+    query->exec();
+    while(query->next())
     {
-        a.additional.label_list.push_back(query.value(0).toString());
+        a.additional.label_list.push_back(query->value(0).toString());
     }
 
-    query.exec(transaction_submission);
+    query->exec(transaction_submission);
     return a;
 }
 /*----------------------------------------------------------------------------------------------------------------------------------*/
@@ -952,23 +967,23 @@ QString analysis_os(QString os)
 void Qquery_to_database::create_information_of_game(int index)
 {
     Brief_information_of_game* one ;
-    while(query.next())
+    while(query->next())
     {
         one = new Brief_information_of_game;
-        one->appid=query.value("AppID").toInt();
-        one->image_URL=query.value("game_intro_img").toString();
-        one->name=query.value("game_name").toString();
-        one->support_os=analysis_os(query.value("os").toString());
-        one->shelves_time=query.value("issue_date").toDate();
+        one->appid=query->value("AppID").toInt();
+        one->image_URL=query->value("game_intro_img").toString();
+        one->name=query->value("game_name").toString();
+        one->support_os=analysis_os(query->value("os").toString());
+        one->shelves_time=query->value("issue_date").toDate();
         one->date=one->shelves_time.toString("yyyy-MM-dd");
-        analysis_reviews(one,query.value("All_reviews").toString());
-        one->new_price=query.value("New_price").toString().remove("S$").toDouble();
-        one->old_price=query.value("Old_price").toString().remove("S$").toDouble();
+        analysis_reviews(one,query->value("All_reviews").toString());
+        one->new_price=query->value("New_price").toString().remove("S$").toDouble();
+        one->old_price=query->value("Old_price").toString().remove("S$").toDouble();
         int discount=(one->old_price-one->new_price)*100/one->old_price;
         one->discount="-"+QString::number(discount)+"%";
         one->discount_rate=discount*1.0/100;
-        if(index==1) one->change=query.value("rank_change").toString();
-        if(index==3) one->change=query.value("category").toString();
+        if(index==1) one->change=query->value("rank_change").toString();
+        if(index==3) one->change=query->value("category").toString();
         brief_information_of_game_list[index].push_back(std::move(one));
 
     }

@@ -65,6 +65,11 @@ User::User()
     connect_to_steam.setPassword("wangisgreat.0525");
     query=QSqlQuery(connect_to_steam);
     connect_to_steam.open();
+
+    query.exec(transaction_begin);
+    query.exec("create procedure one(out sum int)\n"
+               "begin set sum = LAST_INSERT_ID(); end;");
+    query.exec(transaction_submission);
 }
 
 User::~User()
@@ -335,8 +340,99 @@ int User::insert_user_qurty_information(QString label)
     return 0;
 }
 
+int User::add_user_label(QString label,int appid)
+{
+    query.exec(transaction_begin);
 
+    QString add_user_label_sql="insert into tag(tag_name, user_id, tag_times) value (:label,:user_id,1);";
+    query.prepare(add_user_label_sql);
+    query.bindValue(":label",label);
+    query.bindValue(":user_id",user_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
 
+    int tag_id;
+    query.exec("CALL one(@s);");
+    query.exec("select @s");
+    if(query.next()){
+        tag_id=query.value(0).toInt();
+    }
+    QString add_user_to_tag_sql="insert into user_to_tag(user_id, tag_id) VALUE(:user_id,:tag_id);";
+    query.prepare(add_user_to_tag_sql);
+    query.bindValue(":user_id",user_id);
+    query.bindValue(":tag_id",tag_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    QString add_game_to_tag_sql="insert into game_to_tag(appid, tag_id) VALUE(:appid,:tag_id);";
+    query.prepare(add_game_to_tag_sql);
+    query.bindValue(":appid",appid);
+    query.bindValue(":tag_id",tag_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+
+    query.exec(transaction_submission);
+    return 1;
+}
+
+int User::delete_user_label(QString label_name)
+{
+    query.exec(transaction_begin);
+
+    int tag_id=0;
+
+    QString get_tag_id="select tag_id from tag where tag_name=:label";
+    query.prepare(get_tag_id);
+    query.bindValue(":label",label_name);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    query.next();
+    tag_id=query.value(0).toInt();
+
+    qDebug()<<"1";
+    QString delete_user_to_tag_sql="delete from user_to_tag where tag_id=:tag_id";
+    query.prepare(delete_user_to_tag_sql);
+    query.bindValue(":tag_id",tag_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    qDebug()<<"1";
+    QString delete_game_to_tag_sql="delete from game_to_tag where tag_id=:tag_id";
+    query.prepare(delete_game_to_tag_sql);
+    query.bindValue(":tag_id",tag_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    qDebug()<<"1";
+    QString delete_user_label_sql="delete from tag where tag_id=:tag_id";
+    query.prepare(delete_user_label_sql);
+    query.bindValue(":tag_id",tag_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    qDebug()<<"1";
+    query.exec(transaction_submission);
+
+    return 1;
+
+}
 
 /*----------------------------------------------Qquery_to_database----------------------------------------------*/
 

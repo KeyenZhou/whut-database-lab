@@ -159,11 +159,10 @@ private:
 
 
 
-
+    bool add_label_query_time(QString label);
 
 public:
 
-    bool add_label_query_time(QString label);
 
     Qquery_to_database();
     ~Qquery_to_database();
@@ -269,8 +268,8 @@ public:
     //返回值：0成功 ，小于0失败
     int insert_user_qurty_information(QString label);
 
-    //
-    int add_user_label(QString label);
+    //0失败，1成功
+    int add_user_label(QString label,int appid);
     //
     int delete_user_label(QString label_name);
 };

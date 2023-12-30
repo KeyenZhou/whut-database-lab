@@ -25,7 +25,7 @@
 
 
 
-class user;
+class User;
 
 class Translation
 {
@@ -117,8 +117,8 @@ private:
     QString new_product_query_sql;                                                  //新品查询函数的sql语句
     QString preferential_query_sql;                                                 //优惠查询函数的sql语句
     std::vector<std::vector<int>*> information_game_sequence;                       //储存排序信息的数组列表
-    QSqlQuery query;                                                                //查询结构体
-    QSqlDatabase connect_to_stream;                                                 //连接结果体
+    QSqlQuery* query;                                                                //查询结构体
+    QSqlDatabase* connect_to_stream;                                                 //连接结果体
 
 
     std::vector<Brief_information_of_game*> brief_information_of_game_list[8];      //所查询的简略游戏信息结构体的列表
@@ -159,6 +159,7 @@ private:
 
 
 
+    bool add_label_query_time(QString label);
 
 public:
 
@@ -168,13 +169,11 @@ public:
 
     void initialization();                                                          //初始化
 
-    bool connection();                                                              //连接
+    bool connection(User* user);                                                    //连接
 
-    //参数： 类型：QString  含义：所传入的查询的条件
-    //所查询到的游戏信息保存到了brief_information_of_game_list与detail_information_of_game_list中
-    //brief_information_of_game_list与detail_information_of_game_list的
-    //游戏信息结构体顺序是默认的或是综合的
-    bool main_query(QString label);                                                 //主查询函数
+
+    //0成功，1失败
+    int  main_query(QString label,int user_id);                                                 //主查询函数
     bool ranking_query(int index,QString date);                                     //排行榜查询
     bool label_filter_query(QString label);                                         //标签查询函数
     bool new_product_query();                                                       //新品查询函数
@@ -223,6 +222,9 @@ public:
     User();
     ~User();
 
+    QSqlQuery* get_query();
+    QSqlDatabase* get_connect_to_steam();
+
     int test();
 
     //参数：账号user_account，密码user_password
@@ -268,6 +270,11 @@ public:
     //参数：查询的信息
     //返回值：0成功 ，小于0失败
     int insert_user_qurty_information(QString label);
+
+    //0失败，1成功
+    int add_user_label(QString label,int appid);
+    //
+    int delete_user_label(QString label_name);
 };
 
 #endif // QQUERY_TO_DATABASE_H

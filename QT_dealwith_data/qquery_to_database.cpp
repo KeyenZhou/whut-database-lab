@@ -423,7 +423,24 @@ bool Qquery_to_database::connection()
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 //查询函数
 
-bool Qquery_to_database::main_query(QString label)
+
+bool Qquery_to_database::add_label_query_time(QString label)
+{
+    query.exec(transaction_begin);
+    QString add_label_query_time_sql="update tag,(select tag_id from tag where tag_name=:label) as a\n"
+                                       "set tag.tag_times=tag.tag_times+1 where tag.tag_id =a.tag_id;";
+    query.prepare(add_label_query_time_sql);
+    query.bindValue(":label",label);
+    if(query.exec())
+    {
+        query.exec(transaction_submission);
+        return true;
+    }
+    query.exec(transaction_rollback);
+    return false;
+}
+
+int Qquery_to_database::main_query(QString label,int user_id)
 {
     main_query_sql.clear();
     query.clear();
@@ -433,16 +450,29 @@ bool Qquery_to_database::main_query(QString label)
     size_of_result=0;
 
     query.exec(transaction_begin);
+
+
+    query.exec("select tag_id from tag where tag_name = :label and user_id=:user_id;");
+    query.bindValue(":label",label);
+    query.bindValue(":user_id",user_id);
+    query.exec();
+    if(query.numRowsAffected()==0)
+    {
+        query.exec(transaction_submission);
+        return 0;
+    }
+
     if(label.size()!=0)
     {
         main_query_sql=  "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date\n"
                          "from game,\n"
                          "(select distinct AppID from game_to_tag,\n"
-                         "(select tag_id from tag where tag_name like :label) as a\n"
+                         "(select tag_id from tag where tag_name = :label and user_id=:user_id) as a\n"
                          "where a.tag_id=game_to_tag.tag_id) as b\n"
                          "where b.AppID=game.AppID;";
         query.prepare(main_query_sql);
-        query.bindValue(":label","%"+label+"%");
+        query.bindValue(":label",label);
+        query.bindValue(":user_id",user_id);
         query.exec();
     }
     else
@@ -454,7 +484,9 @@ bool Qquery_to_database::main_query(QString label)
     }
     create_information_of_game(0);
     query.exec(transaction_submission);
-    return true;
+
+    add_label_query_time(label);
+    return 1;
 }
 
 bool Qquery_to_database::label_filter_query(QString lable)
@@ -842,6 +874,7 @@ void Qquery_to_database::create_information_of_game(int index)
         if(index==1) one->change=query.value("rank_change").toString();
         if(index==3) one->change=query.value("category").toString();
         brief_information_of_game_list[index].push_back(std::move(one));
+
     }
 }
 

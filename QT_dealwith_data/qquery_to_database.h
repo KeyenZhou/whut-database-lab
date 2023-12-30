@@ -160,8 +160,10 @@ private:
 
 
 
+
 public:
 
+    bool add_label_query_time(QString label);
 
     Qquery_to_database();
     ~Qquery_to_database();
@@ -170,11 +172,9 @@ public:
 
     bool connection();                                                              //连接
 
-    //参数： 类型：QString  含义：所传入的查询的条件
-    //所查询到的游戏信息保存到了brief_information_of_game_list与detail_information_of_game_list中
-    //brief_information_of_game_list与detail_information_of_game_list的
-    //游戏信息结构体顺序是默认的或是综合的
-    bool main_query(QString label);                                                 //主查询函数
+
+    //0成功，1失败
+    int  main_query(QString label,int user_id);                                                 //主查询函数
     bool ranking_query(int index,QString date);                                     //排行榜查询
     bool label_filter_query(QString label);                                         //标签查询函数
     bool new_product_query();                                                       //新品查询函数
@@ -268,6 +268,11 @@ public:
     //参数：查询的信息
     //返回值：0成功 ，小于0失败
     int insert_user_qurty_information(QString label);
+
+    //
+    int add_user_label(QString label);
+    //
+    int delete_user_label(QString label_name);
 };
 
 #endif // QQUERY_TO_DATABASE_H

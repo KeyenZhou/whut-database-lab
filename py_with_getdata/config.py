@@ -21,7 +21,7 @@ web_config = {
 
 url_config = {
     'game_library_url': "https://store.steampowered.com/search/?specials=1&page={}",
-    'game_library_num': 40,
+    'game_library_num': 2,
 
     'week_rank_url': "https://store.steampowered.com/charts/topsellers/CN/{}",
 

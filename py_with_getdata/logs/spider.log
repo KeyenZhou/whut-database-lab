@@ -402,3 +402,828 @@ Traceback (most recent call last):
     insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
                          ^^^^^^^^^^^^^^^^^^
 ValueError: invalid literal for int() with base 10: '35140,200260,208650,367480'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'text'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 364, in static_get_game_details
+    'div.date').text.strip()
+                ^^^^
+AttributeError: 'NoneType' object has no attribute 'text'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'text'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 371, in static_get_game_details
+    'div.summary.column > a').text.strip()
+                              ^^^^
+AttributeError: 'NoneType' object has no attribute 'text'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/960170/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/960170/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 330, in static_get_game_details
+    response = requests.get(url=url, **web_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 517, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/960170/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+ERROR:root:An error occurred: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/975370/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/975370/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 330, in static_get_game_details
+    response = requests.get(url=url, **web_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 517, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/975370/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'text'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 371, in static_get_game_details
+    'div.summary.column > a').text.strip()
+                              ^^^^
+AttributeError: 'NoneType' object has no attribute 'text'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/1432860/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/1432860/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 330, in static_get_game_details
+    response = requests.get(url=url, **web_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 517, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/1432860/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/1604030/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/1604030/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 330, in static_get_game_details
+    response = requests.get(url=url, **web_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 517, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/1604030/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: Message: session not created: Chrome failed to start: exited normally.
+  (chrome not reachable)
+  (The process started from chrome location C:\Program Files\Google\Chrome\Application\chrome.exe is no longer running, so ChromeDriver is assuming that Chrome has crashed.)
+Stacktrace:
+	GetHandleVerifier [0x00007FF72CBE2142+3514994]
+	(No symbol) [0x00007FF72C800CE2]
+	(No symbol) [0x00007FF72C6A76AA]
+	(No symbol) [0x00007FF72C6DB5AA]
+	(No symbol) [0x00007FF72C6D7F52]
+	(No symbol) [0x00007FF72C720AB4]
+	(No symbol) [0x00007FF72C715D93]
+	(No symbol) [0x00007FF72C6E4BDC]
+	(No symbol) [0x00007FF72C6E5C64]
+	GetHandleVerifier [0x00007FF72CC0E16B+3695259]
+	GetHandleVerifier [0x00007FF72CC66737+4057191]
+	GetHandleVerifier [0x00007FF72CC5E4E3+4023827]
+	GetHandleVerifier [0x00007FF72C9304F9+689705]
+	(No symbol) [0x00007FF72C80C048]
+	(No symbol) [0x00007FF72C808044]
+	(No symbol) [0x00007FF72C8081C9]
+	(No symbol) [0x00007FF72C7F88C4]
+	BaseThreadInitThunk [0x00007FFC57A9257D+29]
+	RtlUserThreadStart [0x00007FFC5912AA58+40]
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 344, in static_get_game_details
+    page_source = get_game_details(AppID)
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 449, in get_game_details
+    driver = webdriver.Chrome()
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 45, in __init__
+    super().__init__(
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 61, in __init__
+    super().__init__(command_executor=executor, options=options)
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 209, in __init__
+    self.start_session(capabilities)
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 293, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 348, in execute
+    self.error_handler.check_response(response)
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 229, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: Chrome failed to start: exited normally.
+  (chrome not reachable)
+  (The process started from chrome location C:\Program Files\Google\Chrome\Application\chrome.exe is no longer running, so ChromeDriver is assuming that Chrome has crashed.)
+Stacktrace:
+	GetHandleVerifier [0x00007FF72CBE2142+3514994]
+	(No symbol) [0x00007FF72C800CE2]
+	(No symbol) [0x00007FF72C6A76AA]
+	(No symbol) [0x00007FF72C6DB5AA]
+	(No symbol) [0x00007FF72C6D7F52]
+	(No symbol) [0x00007FF72C720AB4]
+	(No symbol) [0x00007FF72C715D93]
+	(No symbol) [0x00007FF72C6E4BDC]
+	(No symbol) [0x00007FF72C6E5C64]
+	GetHandleVerifier [0x00007FF72CC0E16B+3695259]
+	GetHandleVerifier [0x00007FF72CC66737+4057191]
+	GetHandleVerifier [0x00007FF72CC5E4E3+4023827]
+	GetHandleVerifier [0x00007FF72C9304F9+689705]
+	(No symbol) [0x00007FF72C80C048]
+	(No symbol) [0x00007FF72C808044]
+	(No symbol) [0x00007FF72C8081C9]
+	(No symbol) [0x00007FF72C7F88C4]
+	BaseThreadInitThunk [0x00007FFC57A9257D+29]
+	RtlUserThreadStart [0x00007FFC5912AA58+40]
+
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/2108330/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/2108330/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 330, in static_get_game_details
+    response = requests.get(url=url, **web_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 517, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /app/2108330/?wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /appreviews/2140650?cursor=*&wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+urllib3.exceptions.SSLError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\urllib3\util\retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /appreviews/2140650?cursor=*&wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 414, in static_get_game_details
+    static_content(db, AppID)
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 423, in static_content
+    response = requests.get(url, **web_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\whut-database-lab\py_with_getdata\.venv\Lib\site-packages\requests\adapters.py", line 517, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='store.steampowered.com', port=443): Max retries exceeded with url: /appreviews/2140650?cursor=*&wd=ip (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: 'NoneType' object has no attribute 'get'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 359, in static_get_game_details
+    All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1880360,1446780'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1880360,1446780'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1880360,1446780'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1880360,1446780'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1880360,1446780'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1880360,1446780'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1880360,1446780'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1880360,1446780'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1880360,1446780'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 44, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1880360,1446780'
+ERROR:root:An error occurred: invalid literal for int() with base 10: '1880360,1446780'
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 45, in get_game_library
+    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                         ^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '1880360,1446780'
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str
+ERROR:root:An error occurred: can only concatenate str (not "Tag") to str
+Traceback (most recent call last):
+  File "D:\whut-database-lab\py_with_getdata\spiders\base_spider.py", line 356, in static_get_game_details
+    os = os + div
+         ~~~^~~~~
+TypeError: can only concatenate str (not "Tag") to str

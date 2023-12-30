@@ -4,6 +4,8 @@ from datetime import datetime
 import pymysql as mysql
 from dateutil import parser
 
+import re
+
 
 class Wrapper:
     def __init__(self, value):
@@ -97,7 +99,7 @@ def create_schema(db: mysql.connections.Connection) -> None:
         >>> create_schema(db)
         None
     """
-    with open(r"Steam_create.sql", mode="r", encoding="utf-8") as file:
+    with open(r"../Steam_create.sql", mode="r", encoding="utf-8") as file:
         create_database_sql = file.read()
     cursor = db.cursor()
     try:
@@ -157,3 +159,16 @@ def parse_date(date_string):
             return parsed_date.strftime("%Y-%m-%d")
         except ValueError:
             return None
+
+
+# 转换money
+def extract_numbers_with_comma_and_dot(input_string):
+    # 使用正则表达式匹配包含逗号、点号和数字的子串
+    matches_money = re.findall(r'[,.\d]+', input_string)
+    matches_symbol = re.findall(r'[^,.\d]+', input_string)
+
+    # 将匹配到的字符串列表连接成一个字符串
+    result_money = ''.join(matches_money)
+    result_symbol = ''.join(matches_symbol)
+
+    return f"{result_symbol}({result_money})"

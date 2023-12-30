@@ -5,13 +5,14 @@ from utils.helpers import create_schema
 from spiders.base_spider import get_week_rank
 from spiders.base_spider import get_month_rank
 from spiders.base_spider import get_year_rank
-from spiders.base_spider import static_get_game_details
+from spiders.base_spider import get_detail
 from utils.helpers import insert_sql
+from spiders.base_spider import get_game_details
 
 if __name__ == '__main__':
     db = mysql.connect(**db_config)
     # 创建数据库
-    create_schema(db)
+    # create_schema(db)
     user_sql = '''
         insert into user (user_id, user_account, user_password, user_gender, user_email, user_status, user_admin) values (%s,%s,%s,%s,%s,%s,%s)
     '''
@@ -20,11 +21,11 @@ if __name__ == '__main__':
     get_game_library(db)
 
     # 获得排行
-    get_week_rank(db)
-    get_month_rank(db)
-    get_year_rank(db)
+    # get_week_rank(db)
+    # get_month_rank(db)
+    # get_year_rank(db)
 
     # 获得其他详细信息
-    static_get_game_details(db)
+    get_detail(db)
 
     db.close()

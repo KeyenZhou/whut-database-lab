@@ -20,6 +20,7 @@ from utils.helpers import query_appid
 from utils.helpers import find_appid_in_game_library
 from utils.helpers import parse_date
 import logging
+from utils.helpers import extract_numbers_with_comma_and_dot
 
 logging.basicConfig(filename=r'logs/spider.log', level=logging.ERROR)
 
@@ -322,100 +323,118 @@ def check_none(ob) -> bool:
     return ob is None
 
 
-def static_get_game_details(db: mysql.connections.Connection):
+def get_detail(db: mysql.connections.Connection):
     AppIDs = find_appid_in_game_library(db)
     for AppID in AppIDs:
-        try:
-            url = url_config['game_detail_url'].format(AppID)
-            response = requests.get(url=url, **web_config)
-            if response.status_code == 200:
-                response.encoding = 'utf-8'
-                soup = BeautifulSoup(response.text, 'lxml')
-                sql_insert_game = '''
-                    insert into game values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        status = static_get_game_details(db, AppID)
+        while status != 200:
+            print(f"SSL error in {AppID}")
+            time.sleep(60)
+            status = static_get_game_details(db, AppID)
+
+
+def static_get_game_details(db: mysql.connections.Connection, AppID: int) -> int:
+    try:
+        url = url_config['game_detail_url'].format(AppID)
+        response = requests.get(url=url, **web_config)
+        if response.status_code == 200:
+            response.encoding = 'utf-8'
+            soup = BeautifulSoup(response.text, 'lxml')
+            sql_insert_game = '''
+                    insert into game values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 '''
-                game_name = soup.find('div', id='appHubAppName')
-                Old_price = soup.find('div', class_='discount_original_price')
-                New_price = soup.find('div', class_='discount_final_price')
-                game_intro_img = soup.find('img', class_='game_header_image_full')
-                divs_with_ul = soup.find('div', class_='sys_req')
-                if check_none(game_name) or check_none(Old_price) or check_none(New_price) or check_none(
-                        game_intro_img) or check_none(divs_with_ul):
-                    page_source = get_game_details(AppID)
-                    if page_source is None:
-                        continue
-                    soup = BeautifulSoup(page_source, 'lxml')
-                if soup is None:
-                    continue
-                game_name = soup.find('div', id='appHubAppName').text.strip()
-                divs_with_ul = soup.find('div', class_='sys_req')
-                divs = divs_with_ul.find_all('ul')
-                os_list = []
-                for div in divs:
-                    os_list.append(div.prettify())
-                os = '#'.join(os_list)
-                game_intro_img = soup.find('img', class_='game_header_image_full').get('src').strip()
-                Recent_reviews = soup.select_one('#userReviews > div:nth-child(1)').get('data-tooltip-html').strip()
-                All_reviews = soup.select_one('#userReviews > div:nth-child(2)').get('data-tooltip-html').strip()
-                Old_price = soup.find('div', class_='discount_original_price').text.strip()
-                New_price = soup.find('div', class_='discount_final_price').text.strip()
-                Date = soup.select_one(
-                    '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div.release_date > '
-                    'div.date').text.strip()
-                print(AppID, Date)
-                issue_date = parse_date(Date)
+            game_name = soup.find('div', id='appHubAppName')
+            Old_price = soup.find('div', class_='discount_original_price')
+            New_price = soup.find('div', class_='discount_final_price')
+            game_intro_img = soup.find('img', class_='game_header_image_full')
+            divs_with_ul = soup.find('div', class_='sys_req')
+            if check_none(game_name) or check_none(Old_price) or check_none(New_price) or check_none(
+                    game_intro_img) or check_none(divs_with_ul):
+                page_source = get_game_details(AppID)
+                if page_source is None:
+                    return 0
+                soup = BeautifulSoup(page_source, 'lxml')
+            if soup is None:
+                return 0
+            game_name = soup.find('div', id='appHubAppName').text.strip()
+            divs_with_ul = soup.find('div', class_='sys_req')
+            divs = divs_with_ul.find_all('ul')
+            os = ''
+            for div in divs:
+                os = os + div.prettify()
+            game_intro_img = soup.find('img', class_='game_header_image_full').get('src').strip()
+            Recent_reviews = soup.select_one('#userReviews > div:nth-child(1)').get('data-tooltip-html').strip()
+            All_reviews = soup.select_one('#userReviews > div:nth-child(2)')
+            if All_reviews:
+                All_reviews = All_reviews.get('data-tooltip-html').strip()
+            else:
+                All_reviews = Recent_reviews
+            Old_price = soup.find('div', class_='discount_original_price').text.strip()
+            Old_price = extract_numbers_with_comma_and_dot(Old_price)
+            New_price = soup.find('div', class_='discount_final_price').text.strip()
+            New_price = extract_numbers_with_comma_and_dot(New_price)
+            Date = soup.select_one(
+                '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div.release_date > '
+                'div.date').text.strip()
+            print(AppID, Date)
+            issue_date = parse_date(Date)
+            language = soup.find('table', class_='game_language_options').prettify()
 
-                developer = soup.select_one('#developers_list > a').text.strip()
-                publisher = soup.select_one(
-                    '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div:nth-child(4) > '
-                    'div.summary.column > a').text.strip()
-                developer_url = soup.select_one('#developers_list').find('a').get('href')
-                publisher_url = soup.select_one(
-                    '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div:nth-child(4) > '
-                    'div.summary.column').find('a').get('href')
-                publisher_id = find_dev(db, publisher, publisher_url)
-                developer_id = find_dev(db, developer, developer_url)
+            developer = soup.select_one('#developers_list > a').text.strip()
+            publisher = soup.select_one(
+                '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div:nth-child(4) > '
+                'div.summary.column > a').text.strip()
+            developer_url = soup.select_one('#developers_list').find('a').get('href')
+            publisher_url = soup.select_one(
+                '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div:nth-child(4) > '
+                'div.summary.column').find('a').get('href')
+            publisher_id = find_dev(db, publisher, publisher_url)
+            developer_id = find_dev(db, developer, developer_url)
 
-                insert_sql(db, sql_insert_game, (
-                    AppID, game_name, os, game_intro_img, Recent_reviews, All_reviews, Old_price, New_price, issue_date,
-                    developer_id, publisher_id))
-                sql_develop_to_game = '''
+            insert_sql(db, sql_insert_game, (
+                AppID, game_name, os, game_intro_img, Recent_reviews, All_reviews, Old_price, New_price, issue_date,
+                developer_id, publisher_id, language))
+            sql_develop_to_game = '''
                     insert into developer_to_game values (%s,%s)
                 '''
-                insert_sql(db, sql_develop_to_game, (publisher_id, AppID))
-                if publisher_id != developer_id:
-                    insert_sql(db, sql_develop_to_game, (developer_id, AppID))
-                tag_list = []
-                tags = soup.find_all('a', class_='app_tag')
-                for tag in tags:
-                    tag_list.append(tag.text.strip())
-                sql_find_tag = '''
+            insert_sql(db, sql_develop_to_game, (publisher_id, AppID))
+            if publisher_id != developer_id:
+                insert_sql(db, sql_develop_to_game, (developer_id, AppID))
+            tag_list = []
+            tags = soup.find_all('a', class_='app_tag')
+            for tag in tags:
+                tag_list.append(tag.text.strip())
+            sql_find_tag = '''
                     select tag_id,tag_name from tag;
                 '''
-                cursor = db.cursor()
-                cursor.execute(sql_find_tag)
-                tags = cursor.fetchall()
-                # print(tags)
-                tags_dict = {t[1]: t[0] for t in tags}
-                for tag in tag_list:
-                    if tag in tags_dict.keys():
-                        tag_id = tags_dict[tag]
-                    else:
-                        tag_insert_sql = '''
+            cursor = db.cursor()
+            cursor.execute(sql_find_tag)
+            tags = cursor.fetchall()
+            # print(tags)
+            tags_dict = {t[1]: t[0] for t in tags}
+            for tag in tag_list:
+                if tag in tags_dict.keys():
+                    tag_id = tags_dict[tag]
+                else:
+                    tag_insert_sql = '''
                             insert into tag (tag_name) values (%s);
                         '''
-                        tag_idw = Wrapper(-1)
-                        insert_sql(db, tag_insert_sql, (tag,), tag_idw)
-                        tag_id = tag_idw.value
-                    sql_insert_game_to_tag = '''
+                    tag_idw = Wrapper(-1)
+                    insert_sql(db, tag_insert_sql, (tag,), tag_idw)
+                    tag_id = tag_idw.value
+                sql_insert_game_to_tag = '''
                         insert into game_to_tag values (%s,%s);
                     '''
-                    insert_sql(db, sql_insert_game_to_tag, (AppID, tag_id))
-                static_content(db, AppID)
-            else:
-                time.sleep(60)
-        except Exception as e:
-            logging.error("An error occurred: %s", str(e), exc_info=(type(e), e, e.__traceback__))
+                insert_sql(db, sql_insert_game_to_tag, (AppID, tag_id))
+            static_content(db, AppID)
+            print(f"成功插入{game_name}")
+            return 200
+        else:
+            return 0
+    except Exception as e:
+        print({f"插入{AppID}失败"})
+        logging.error("An error occurred: %s", str(e), exc_info=(type(e), e, e.__traceback__))
+        return 0
 
 
 def static_content(db: mysql.connections.Connection, AppID: int):
@@ -445,9 +464,9 @@ def static_content(db: mysql.connections.Connection, AppID: int):
 
 # selenium动态爬取
 def get_game_details(AppID: int):
+    driver = webdriver.Chrome()
+    driver.get(f'https://store.steampowered.com/app/{AppID}/')
     try:
-        driver = webdriver.Chrome()
-        driver.get(f'https://store.steampowered.com/app/{AppID}/')
         if driver.current_url == f'https://store.steampowered.com/agecheck/app/{AppID}/':
             WebDriverWait(driver, 60).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '#view_product_page_btn > span')))
@@ -460,14 +479,12 @@ def get_game_details(AppID: int):
             link_element.click()
         time.sleep(20)
         driver.execute_script("window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});")
-        WebDriverWait(driver, 60).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, '#ViewAllReviewssummary > a')))
+        time.sleep(5)
         driver.execute_script("window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});")
         time.sleep(20)
-        # 游戏page
-        page_source = driver.page_source
-        driver.quit()
-        return page_source
     except TimeoutException:
         print("TimeoutException")
-        return None
+        # 游戏page
+    page_source = driver.page_source
+    driver.quit()
+    return page_source

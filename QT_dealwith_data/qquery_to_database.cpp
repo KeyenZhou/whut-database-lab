@@ -749,6 +749,11 @@ bool Qquery_to_database::new_product_query()
     return true;
 }
 
+// SELECT *
+//         FROM game
+//             WHERE CAST(SUBSTRING_INDEX(new_price, ' ', -1) AS DECIMAL(10,2)) <= CAST(SUBSTRING_INDEX(old_price, ' ', -1) AS DECIMAL(10,2)) / 2
+//           ORDER BY CAST(SUBSTRING_INDEX(new_price, ' ', -1) AS DECIMAL(10,2)) / CAST(SUBSTRING_INDEX(old_price, ' ', -1) AS DECIMAL(10,2)) ASC;
+
 bool Qquery_to_database::preferential_query()
 {
 
@@ -762,11 +767,11 @@ bool Qquery_to_database::preferential_query()
     preferential_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date\n"
                              "FROM `game`\n"
                              "WHERE\n"
-                             "CAST(SUBSTRING_INDEX(`new_price`, 'S$', -1) AS DECIMAL(10, 2)) <=\n"
-                             "0.5 * CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2))\n"
+                             "CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(new_price, '(', -1), ')', 1) AS DECIMAL(10, 2)) <=\n"
+                             "CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(old_price, '(', -1), ')', 1) AS DECIMAL(10, 2)) / 2\n"
                              "ORDER BY\n"
-                             "CAST(SUBSTRING_INDEX(`new_price`, 'S$', -1) AS DECIMAL(10, 2)) /\n"
-                             "CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2)) ASC;";
+                             "CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(new_price, '(', -1), ')', 1) AS DECIMAL(10, 2)) /\n"
+                             "CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(old_price, '(', -1), ')', 1) AS DECIMAL(10, 2)) ASC;";
     query->prepare(preferential_query_sql);
     query->exec();
     create_information_of_game(7);
@@ -940,25 +945,50 @@ void Qquery_to_database::favorable_comparison_desc_sort()
 
 void analysis_reviews(Brief_information_of_game* one,QString Good)
 {
+    if(Good[0]<='9'&&Good[0]>='0')
+    {
+        QString positive_rating;
+        QString number_of_comments;
+        bool digit=true;
+        for(auto i:Good)
+        {
+            if(i>='0'&&i<='9'&&digit)
+            {
+                positive_rating.append(i);
+            }
+            else if (i=='%') digit=!digit;
+            else if (i>='0'&&i<='9'&&!digit)
+            {
+                number_of_comments.append(i);
+            }
+        }
+        one->favorable_comparison=positive_rating.toInt()*1.0/100;
+        one->number_positive_reviews=number_of_comments.toInt();
+        one->number_negative_reviews=(one->number_positive_reviews/one->favorable_comparison)*(1-one->favorable_comparison);
+        one->positive_rate=positive_rating+"%";
+        return;
+    }
+
+
     QString positive_rating;
     QString number_of_comments;
     bool digit=true;
     for(auto i:Good)
     {
-        if(i>='0'&&i<='9'&&digit)
-        {
-            positive_rating.append(i);
-        }
-        else if (i=='%') digit=!digit;
-        else if (i>='0'&&i<='9'&&!digit)
-        {
-            number_of_comments.append(i);
-        }
+        if(i>='0'&&i<='9'&&digit) positive_rating.append(i);
     }
-    one->favorable_comparison=positive_rating.toInt()*1.0/100;
-    one->number_positive_reviews=number_of_comments.toInt();
+    int stringLength = positive_rating.length();
+
+    QString lastTwoDigits = positive_rating.right(2);
+
+    QString remainingString = positive_rating.left(stringLength - 2);
+
+    one->favorable_comparison=lastTwoDigits.toInt()*1.0/100;
+    one->number_positive_reviews=remainingString.toInt();
     one->number_negative_reviews=(one->number_positive_reviews/one->favorable_comparison)*(1-one->favorable_comparison);
-    one->positive_rate=positive_rating+"%";
+    one->positive_rate=lastTwoDigits+"%";
+    return;
+
 }
 QString analysis_os(QString os)
 {
@@ -994,15 +1024,15 @@ void Qquery_to_database::create_information_of_game(int index)
         one->shelves_time=query->value("issue_date").toDate();
         one->date=one->shelves_time.toString("yyyy-MM-dd");
         analysis_reviews(one,query->value("All_reviews").toString());
-        // int leftBracketIndex = query->value("New_price").toString().indexOf("(");
-        // int rightBracketIndex = query->value("New_price").toString().indexOf(")");
-        // one->new_price=query->value("New_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
-        // leftBracketIndex = query->value("Old_price").toString().indexOf("(");
-        // rightBracketIndex = query->value("Old_price").toString().indexOf(")");
-        // one->old_price=query->value("Old_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
+        int leftBracketIndex = query->value("New_price").toString().indexOf("(");
+        int rightBracketIndex = query->value("New_price").toString().indexOf(")");
+        one->new_price=query->value("New_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
+        leftBracketIndex = query->value("Old_price").toString().indexOf("(");
+        rightBracketIndex = query->value("Old_price").toString().indexOf(")");
+        one->old_price=query->value("Old_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
 
-        one->new_price=query->value("New_price").toString().remove("HK$ ").toDouble();
-        one->old_price=query->value("Old_price").toString().remove("HK$ ").toDouble();
+        // one->new_price=query->value("New_price").toString().remove("HK$ ").toDouble();
+        // one->old_price=query->value("Old_price").toString().remove("HK$ ").toDouble();
         int discount=(one->old_price-one->new_price)*100/one->old_price;
         one->discount="-"+QString::number(discount)+"%";
         one->discount_rate=discount*1.0/100;

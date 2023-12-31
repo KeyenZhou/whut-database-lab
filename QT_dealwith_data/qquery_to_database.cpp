@@ -88,10 +88,6 @@ HUser::HUser()
     query=QSqlQuery(connect_to_steam);
     connect_to_steam.open();
 
-    // query.exec(transaction_begin);
-    // query.exec("create procedure one(out sum int)\n"
-    //            "begin set sum = LAST_INSERT_ID(); end;");
-    // query.exec(transaction_submission);
 }
 
 HUser::~HUser()
@@ -522,9 +518,7 @@ int HUser::delete_user_content(QString content)
 {
     query.exec(transaction_begin);
     int content_id;
-    QString get_content_id_sql="select a.content_id from content,\n"
-                                 "(select content_id from content_to_user where user_id=:user_id) as a\n"
-                                 "where content.content_id=a.content_id and content.content_content=:content;";
+    QString get_content_id_sql="select GetContentId(:user_id,:content);";
     query.prepare(get_content_id_sql);
     query.bindValue(":content",content);
     query.bindValue(":user_id",user_id);
@@ -562,7 +556,6 @@ int HUser::delete_user_content(QString content)
         query.exec(transaction_rollback);
         return 0;
     }
-
     query.exec(transaction_submission);
     return 1;
 }
@@ -1392,6 +1385,7 @@ std::vector<Brief_information_of_game> Qquery_to_database::get_preferential_quer
 
 std::vector<QPair<QString,QString>> Qquery_to_database::get_system_label_list(int count)
 {
+    query->exec(transaction_begin);
     std::vector<QPair<QString,QString>> system_label_list;
     QString get_system_label_list_sql="select tag_name from tag order by tag_times desc  limit :count ;";
     query->prepare(get_system_label_list_sql);
@@ -1401,8 +1395,27 @@ std::vector<QPair<QString,QString>> Qquery_to_database::get_system_label_list(in
     {
         system_label_list.push_back(qMakePair(query->value(0).toString(),query->value(0).toString()));
     }
+    query->exec(transaction_submission);
     return system_label_list;
 }
 
+std::vector<QString> Qquery_to_database::get_game_content_list(int count,int appid)
+{
+    query->exec(transaction_begin);
+    std::vector<QString> game_content_list;
+    QString get_game_content_list_sql="select distinct content_content from content,\n"
+                                        "(select content_id from content_to_game where AppID=:appid) as a\n"
+                                        "where a.content_id=content.content_id limit :count;";
+    query->prepare(get_game_content_list_sql);
+    query->bindValue(":appid",appid);
+    query->bindValue(":count",count);
+    query->exec();
+    while(query->next())
+    {
+        game_content_list.push_back(query->value(0).toString());
+    }
+    query->exec(transaction_submission);
+    return game_content_list;
+}
 /*----------------------------------------------Qquery_to_database--------------------------------*/
 

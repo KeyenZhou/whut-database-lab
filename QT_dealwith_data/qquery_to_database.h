@@ -201,6 +201,7 @@ public:
     std::vector<Brief_information_of_game> get_new_product_query_game(int left,int right);        //获取新品查询结果~
     std::vector<Brief_information_of_game> get_preferential_query_game(int left,int right);       //获取优惠查询结果~
     std::vector<QPair<QString,QString>>    get_system_label_list(int count);
+    std::vector<QString>                   get_game_content_list(int count,int appid);
 };
 
 

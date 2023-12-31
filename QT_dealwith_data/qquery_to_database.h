@@ -95,7 +95,7 @@ struct Additional_information_of_game
     //游戏标签
     std::vector<QString> label_list;
     //系统配置
-    QStringList system_configuration_list;
+    QString system_configuration;
 };
 
 struct Detail_information_of_game
@@ -179,6 +179,8 @@ public:
     bool new_product_query();                                                       //新品查询函数
     bool preferential_query();                                                      //优惠查询函数
 
+
+
     //参数：所查询游戏的appid
     //返回值：含有游戏信息的结构体
     Detail_information_of_game get_detail_information_of_game(int appid);           //获取游戏详细信息
@@ -186,6 +188,7 @@ public:
     bool continue_promotion_query();
 
     std::vector<Brief_information_of_game> get_main_query_game(int left,int right);               //获取主查寻结果left到right之间的游戏信息
+    std::vector<Brief_information_of_game> get_default_label_query_game(int left,int right);      //获取标签查询默认结果~
     std::vector<Brief_information_of_game> get_date_label_query_game(int left,int right);         //获取标签查询按日期结果~
     std::vector<Brief_information_of_game> get_date_desc_label_query_game(int left,int right);    //获取标签查询按日期结果
     std::vector<Brief_information_of_game> get_price_ascend_label_query_game(int left,int right); //获取标签查询按价格升序结果~
@@ -197,7 +200,7 @@ public:
     std::vector<Brief_information_of_game> get_year_rank_query_game(int left,int right);          //获取年排行查询结果~
     std::vector<Brief_information_of_game> get_new_product_query_game(int left,int right);        //获取新品查询结果~
     std::vector<Brief_information_of_game> get_preferential_query_game(int left,int right);       //获取优惠查询结果~
-
+    std::vector<QPair<QString,QString>>    get_system_label_list(int count);
 };
 
 
@@ -275,6 +278,10 @@ public:
     int add_user_label(QString label,int appid);
     //
     int delete_user_label(QString label_name);
+
+    int add_user_content(QString content,int appid);
+
+    int delete_user_content(QString content);
 };
 
 #endif // QQUERY_TO_DATABASE_H

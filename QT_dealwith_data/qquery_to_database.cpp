@@ -2,7 +2,7 @@
 
 void analysis_reviews(Brief_information_of_game* one,QString Good);
 QString analysis_os(QString os);
-QString analysis_language(QString language);
+std::vector<QString> analysis_language(QString language);
 /*----------------------------------------------Translation----------------------------------------------*/
 void Translation::put_lable(QString s)
 {
@@ -379,6 +379,11 @@ int HUser::add_user_label(QString label,int appid)
     if(query.next()){
         tag_id=query.value(0).toInt();
     }
+    else
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
     QString add_user_to_tag_sql="insert into user_to_tag(user_id, tag_id) VALUE(:user_id,:tag_id);";
     query.prepare(add_user_to_tag_sql);
     query.bindValue(":user_id",user_id);
@@ -408,9 +413,10 @@ int HUser::delete_user_label(QString label_name)
 
     int tag_id=0;
 
-    QString get_tag_id="select tag_id from tag where tag_name=:label";
+    QString get_tag_id="select tag_id from tag where tag_name=:label and user_id=:user_id";
     query.prepare(get_tag_id);
     query.bindValue(":label",label_name);
+    query.bindValue(":user_id",user_id);
     if(!query.exec())
     {
         query.exec(transaction_rollback);
@@ -419,7 +425,6 @@ int HUser::delete_user_label(QString label_name)
     query.next();
     tag_id=query.value(0).toInt();
 
-    qDebug()<<"1";
     QString delete_user_to_tag_sql="delete from user_to_tag where tag_id=:tag_id";
     query.prepare(delete_user_to_tag_sql);
     query.bindValue(":tag_id",tag_id);
@@ -428,7 +433,6 @@ int HUser::delete_user_label(QString label_name)
         query.exec(transaction_rollback);
         return 0;
     }
-    qDebug()<<"1";
     QString delete_game_to_tag_sql="delete from game_to_tag where tag_id=:tag_id";
     query.prepare(delete_game_to_tag_sql);
     query.bindValue(":tag_id",tag_id);
@@ -437,7 +441,6 @@ int HUser::delete_user_label(QString label_name)
         query.exec(transaction_rollback);
         return 0;
     }
-    qDebug()<<"1";
     QString delete_user_label_sql="delete from tag where tag_id=:tag_id";
     query.prepare(delete_user_label_sql);
     query.bindValue(":tag_id",tag_id);
@@ -446,13 +449,104 @@ int HUser::delete_user_label(QString label_name)
         query.exec(transaction_rollback);
         return 0;
     }
-    qDebug()<<"1";
     query.exec(transaction_submission);
 
     return 1;
 
 }
 
+int HUser::add_user_content(QString content,int appid)
+{
+    query.exec(transaction_begin);
+
+    QString date="Posted: "+QString::number(QDate::currentDate().day())+" "+QDate::currentDate().toString("MMMM");
+    QString add_user_content_sql="insert into content(content_content,content_date) value(:content,:date);";
+    query.prepare(add_user_content_sql);
+    query.bindValue(":content",content);
+    query.bindValue(":date",date);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    int content_id;
+    query.exec("CALL one(@s);");
+    query.exec("select @s");
+    if(query.next()){
+        content_id=query.value(0).toInt();
+    }
+    else
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    QString add_content_to_user_sql="insert into content_to_user(user_id, content_id) VALUE(:user_id,:content_id);";
+    query.prepare(add_content_to_user_sql);
+    query.bindValue(":user_id",user_id);
+    query.bindValue(":content_id",content_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    QString add_content_to_game_sql="insert into content_to_game(content_id, AppID) VALUE(:content_id,:appid);";
+    query.prepare(add_content_to_game_sql);
+    query.bindValue(":appid",appid);
+    query.bindValue(":content_id",content_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+
+    query.exec(transaction_submission);
+    return 1;
+
+}
+
+int HUser::delete_user_content(QString content)
+{
+//     query.exec(transaction_begin);
+
+//     int content_id;
+//     QString get_content_id_sql="select content_id from content where user_id=:user_id and content =:content;";
+//     query.prepare(get_content_id_sql);
+//     query.bindValue(":user_id",user_id);
+//     query.bindValue(":content",content);
+//     if(!query.exec())
+//     {
+//         query.exec(transaction_rollback);
+//         return 0;
+//     }
+//     query.next();
+//     content_id=query.value(0).toInt();
+
+//     QString delete_content_to_user_sql="delete from content_to_user where content_id=:content_id";
+//     query.prepare(delete_content_to_user_sql);
+//     query.bindValue(":content_id",content_id);
+//     if(!query.exec())
+//     {
+//         query.exec(transaction_rollback);
+//         return 0;
+//     }
+//     QString delete_content_to_game_sql="delete from content_to_game where content_id=:content_id";
+//     query.prepare(delete_content_to_game_sql);
+//     query.bindValue(":tag_id",tag_id);
+//     if(!query.exec())
+//     {
+//         query.exec(transaction_rollback);
+//         return 0;
+//     }
+//     QString delete_user_label_sql="delete from tag where tag_id=:tag_id";
+//     query.prepare(delete_user_label_sql);
+//     query.bindValue(":tag_id",tag_id);
+//     if(!query.exec())
+//     {
+//         query.exec(transaction_rollback);
+//         return 0;
+//     }
+//     query.exec(transaction_submission);
+// }
 /*----------------------------------------------Qquery_to_database----------------------------------------------*/
 
 //初始化
@@ -749,11 +843,6 @@ bool Qquery_to_database::new_product_query()
     return true;
 }
 
-// SELECT *
-//         FROM game
-//             WHERE CAST(SUBSTRING_INDEX(new_price, ' ', -1) AS DECIMAL(10,2)) <= CAST(SUBSTRING_INDEX(old_price, ' ', -1) AS DECIMAL(10,2)) / 2
-//           ORDER BY CAST(SUBSTRING_INDEX(new_price, ' ', -1) AS DECIMAL(10,2)) / CAST(SUBSTRING_INDEX(old_price, ' ', -1) AS DECIMAL(10,2)) ASC;
-
 bool Qquery_to_database::preferential_query()
 {
 
@@ -785,7 +874,7 @@ Detail_information_of_game Qquery_to_database::get_detail_information_of_game(in
 
     query->clear();
     QString detail_information_query_sql = "select AppID,game_name,os,game_intro_img,Recent_reviews,All_reviews,\n"
-                                           "Old_price,New_price,issue_date,developer_id,publisher_id from game_details \n"
+                                           "Old_price,New_price,issue_date,developer_id,publisher_id,language from game \n"
                                            "where AppID=:appid";
     query->prepare(detail_information_query_sql);
     query->bindValue(":appid",appid);
@@ -800,33 +889,66 @@ Detail_information_of_game Qquery_to_database::get_detail_information_of_game(in
     a.brief.shelves_time=query->value("issue_date").toDate();
     a.brief.date=a.brief.shelves_time.toString("yyyy-MM-dd");
     analysis_reviews(&(a.brief),query->value("All_reviews").toString());
-    a.brief.new_price=query->value("New_price").toString().remove("S$").toDouble();
-    a.brief.old_price=query->value("Old_price").toString().remove("S$").toDouble();
+
+    int leftBracketIndex = query->value("New_price").toString().indexOf("(");
+    int rightBracketIndex = query->value("New_price").toString().indexOf(")");
+    a.brief.new_price=query->value("New_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
+    leftBracketIndex = query->value("Old_price").toString().indexOf("(");
+    rightBracketIndex = query->value("Old_price").toString().indexOf(")");
+    a.brief.old_price=query->value("Old_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
+
     int discount=(a.brief.old_price-a.brief.new_price)*100/a.brief.old_price;
     a.brief.discount="-"+QString::number(discount)+"%";
     a.brief.discount_rate=discount*1.0/100;
 
-    QString positive_rating;
-    QString number_of_comments;
-    bool digit=true;
-    for(auto i:query->value("Recent_reviews").toString())
+    QString recent_reviews=query->value("Recent_reviews").toString();
+    if(recent_reviews[0]<='9'&&recent_reviews>='0')
     {
-        if(i>='0'&&i<='9'&&digit)
+        QString positive_rating;
+        QString number_of_comments;
+        bool digit=true;
+        for(auto i:query->value("Recent_reviews").toString())
         {
-            positive_rating.append(i);
+            if(i>='0'&&i<='9'&&digit)
+            {
+                positive_rating.append(i);
+            }
+            else if (i=='%') digit=!digit;
+            else if (i>='0'&&i<='9'&&!digit)
+            {
+                number_of_comments.append(i);
+            }
+            else if(i=='u') break;
         }
-        else if (i=='%') digit=!digit;
-        else if (i>='0'&&i<='9'&&!digit)
-        {
-            number_of_comments.append(i);
-        }
+        a.additional.favorable_comparison=positive_rating.toInt()*1.0/100;
+        a.additional.number_positive_reviews=number_of_comments.toInt();
+        a.additional.number_negative_reviews=(a.additional.number_positive_reviews/a.additional.favorable_comparison)*(1-a.additional.favorable_comparison);
+        a.additional.positive_rate=positive_rating+"%";
     }
-    a.additional.favorable_comparison=positive_rating.toInt()*1.0/100;
-    a.additional.number_positive_reviews=number_of_comments.toInt();
-    a.additional.number_negative_reviews=(a.additional.number_positive_reviews/a.additional.favorable_comparison)*(1-a.additional.favorable_comparison);
-    a.additional.positive_rate=positive_rating+"%";
 
-    a.additional.system_configuration_list=query->value("os").toString().split("#");
+    else
+    {
+        QString positive_rating;
+        QString number_of_comments;
+        for(auto i:recent_reviews)
+        {
+            if(i>='0'&&i<='9') positive_rating.append(i);
+        }
+        int stringLength = positive_rating.length();
+
+        QString lastTwoDigits = positive_rating.right(2);
+
+        QString remainingString = positive_rating.left(stringLength - 2).right(positive_rating.left(stringLength - 2).length()-2);
+
+        a.additional.favorable_comparison=lastTwoDigits.toInt()*1.0/100;
+        a.additional.number_positive_reviews=remainingString.toInt();
+        a.additional.number_negative_reviews=(a.additional.number_positive_reviews/a.additional.favorable_comparison)*(1-a.additional.favorable_comparison);
+        a.additional.positive_rate=lastTwoDigits+"%";
+    }
+
+    a.additional.system_configuration=query->value("os").toString();
+    a.additional.language_support=analysis_language(query->value("language").toString());
+
 
     if(a.brief.favorable_comparison>=0.95)     a.additional.evaluate="好评如潮";
     else if(a.brief.favorable_comparison>=0.8) a.additional.evaluate="特别好评";
@@ -837,19 +959,27 @@ Detail_information_of_game Qquery_to_database::get_detail_information_of_game(in
 
     int publisher_id=query->value("publisher_id").toInt();
     int developer_id=query->value("developer_id").toInt();
+    if(publisher_id<0) publisher_id=developer_id;
+    if(developer_id<0) developer_id=publisher_id;
 
     QString get_publisher_name="select developer_name from dev_pub_er where dev_pub_id=:id";
-    query->prepare(get_publisher_name);
-    query->bindValue(":id",publisher_id);
-    query->exec();
-    query->next();
-    a.additional.publisher=query->value("developer_name").toString();
+    if(publisher_id>0)
+    {
+        query->prepare(get_publisher_name);
+        query->bindValue(":id",publisher_id);
+        query->exec();
+        query->next();
+        a.additional.publisher=query->value("developer_name").toString();
+    }
 
-    query->prepare(get_publisher_name);
-    query->bindValue(":id",developer_id);
-    query->exec();
-    query->next();
-    a.additional.developer=query->value("developer_name").toString();
+    if(developer_id>0)
+    {
+        query->prepare(get_publisher_name);
+        query->bindValue(":id",developer_id);
+        query->exec();
+        query->next();
+        a.additional.developer=query->value("developer_name").toString();
+    }
 
     QString get_game_label = "select tag_name from tag,\n"
                              "(select tag_id from game_to_tag where AppID=:AppID) as a\n"
@@ -861,6 +991,7 @@ Detail_information_of_game Qquery_to_database::get_detail_information_of_game(in
     {
         a.additional.label_list.push_back(query->value(0).toString());
     }
+
 
     query->exec(transaction_submission);
     return a;
@@ -998,16 +1129,16 @@ QString analysis_os(QString os)
     if(os.contains("Linux")) OS+="/Linux";
     return OS;
 }
-QString analysis_language(QString language)
+std::vector<QString> analysis_language(QString language)
 {
     language.replace(" ", "");
     language.replace("\n","");
-    QString sup_language="";
+    std::vector<QString> sup_language;
     QRegularExpression regex("left\">(.*?)<");
     QRegularExpressionMatchIterator matches = regex.globalMatch(language);
     while (matches.hasNext()) {
         QRegularExpressionMatch match = matches.next();
-        sup_language+="/"+ match.captured(1);
+        sup_language.push_back(match.captured(1));
     }
     return sup_language;
 }
@@ -1031,8 +1162,6 @@ void Qquery_to_database::create_information_of_game(int index)
         rightBracketIndex = query->value("Old_price").toString().indexOf(")");
         one->old_price=query->value("Old_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
 
-        // one->new_price=query->value("New_price").toString().remove("HK$ ").toDouble();
-        // one->old_price=query->value("Old_price").toString().remove("HK$ ").toDouble();
         int discount=(one->old_price-one->new_price)*100/one->old_price;
         one->discount="-"+QString::number(discount)+"%";
         one->discount_rate=discount*1.0/100;
@@ -1082,6 +1211,19 @@ std::vector<Brief_information_of_game> Qquery_to_database::get_main_query_game(i
     for(int i=left;i<=right;i++)
     {
         a.push_back(*(brief_information_of_game_list[0])[i]);
+    }
+    return a;
+}
+
+std::vector<Brief_information_of_game> Qquery_to_database::get_default_label_query_game(int left,int right)
+{
+    std::vector<Brief_information_of_game> a;
+    int size=brief_information_of_game_list[4].size()-1;
+    if(size<left) return a;
+    else if (size<=right) right=size;
+    for(int i=left;i<=right;i++)
+    {
+        a.push_back(*(brief_information_of_game_list[4])[i]);
     }
     return a;
 }
@@ -1227,6 +1369,20 @@ std::vector<Brief_information_of_game> Qquery_to_database::get_preferential_quer
         a.push_back(*(brief_information_of_game_list[7])[i]);
     }
     return a;
+}
+
+std::vector<QPair<QString,QString>> Qquery_to_database::get_system_label_list(int count)
+{
+    std::vector<QPair<QString,QString>> system_label_list;
+    QString get_system_label_list_sql="select tag_name from tag order by tag_times desc  limit :count ;";
+    query->prepare(get_system_label_list_sql);
+    query->bindValue(":count",count);
+    query->exec();
+    while(query->next())
+    {
+        system_label_list.push_back(qMakePair(query->value(0).toString(),query->value(0).toString()));
+    }
+    return system_label_list;
 }
 
 /*----------------------------------------------Qquery_to_database--------------------------------*/

@@ -123,6 +123,17 @@ int HUser::user_log_in(QString user_account1,QString user_password1)
 
 int HUser::user_register(QString user_account,QString user_password,QString user_gender,QString user_email)
 {
+
+    QRegularExpression regex("^[a-zA-Z0-9]{8,18}$");
+
+    QRegularExpressionMatch match = regex.match(user_account);
+
+    if (!match.hasMatch()) return 3;
+
+    QRegularExpressionMatch match1 = regex.match(user_password);
+
+    if (!match1.hasMatch()) return 4;
+
     query.exec(transaction_begin);
 
     QString a="select count(*) from user where user_account=:user_account and user_status!=-1;";
@@ -685,10 +696,11 @@ bool Qquery_to_database::ranking_query(int index,QString date)
 
     else if(index==1)
     {
-        for(auto a:(brief_information_of_game_list[1])) std::free(a);
+        for(auto a:(brief_information_of_game_list[2])) std::free(a);
         std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[2]);
 
         time=QDate::fromString(date, "yyyy-MM-dd").addDays(1-QDate::fromString(date, "yyyy-MM-dd").day());
+        qDebug()<<time.toString("yyyy-MM-dd");
         ranking_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date from game,\n"
                             "(select AppID from month_rank where Date=:time) as a\n"
                             "where a.AppID=game.AppID;";
@@ -700,7 +712,7 @@ bool Qquery_to_database::ranking_query(int index,QString date)
 
     else if(index==2)
     {
-        for(auto a:(brief_information_of_game_list[1])) std::free(a);
+        for(auto a:(brief_information_of_game_list[3])) std::free(a);
         std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[3]);
 
         time=QDate::fromString(date, "yyyy-MM-dd").addDays(1-QDate::fromString(date, "yyyy-MM-dd").dayOfYear());

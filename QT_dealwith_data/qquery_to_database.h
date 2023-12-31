@@ -232,7 +232,7 @@ public:
     int user_log_in(QString user_account,QString user_password);
 
     //参数：账号user_account，密码user_password，邮箱user_email默认为none
-    //返回值：账号已存在1，成功0,注册失败原因未知（数据库内部可能出现问题）2
+    //返回值：账号已存在1，成功0,注册失败原因未知（数据库内部可能出现问题）2,账号格式不对3，密码格式不对4
     int user_register(QString user_account,QString user_password,QString user_gender,QString user_email="none");
 
     //参数：用户id user_id

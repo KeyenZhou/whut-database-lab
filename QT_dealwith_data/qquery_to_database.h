@@ -177,7 +177,7 @@ public:
     bool ranking_query(int index,QString date);                                     //排行榜查询
     bool label_filter_query(QString label);                                         //标签查询函数
     bool new_product_query();                                                       //新品查询函数
-    bool preferential_query(QString discount);                                      //优惠查询函数
+    bool preferential_query();                                                      //优惠查询函数
 
     //参数：所查询游戏的appid
     //返回值：含有游戏信息的结构体

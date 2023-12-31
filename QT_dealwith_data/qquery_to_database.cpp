@@ -749,16 +749,13 @@ bool Qquery_to_database::new_product_query()
     return true;
 }
 
-bool Qquery_to_database::preferential_query(QString discount)
+bool Qquery_to_database::preferential_query()
 {
-    QString disc;
-    for(auto a:discount)
-    {
-        if('0'<=a and a<='9') disc.append(a);
-    }
-    double dis=disc.toDouble()/100;
-    query->clear();
+
     size_of_preferential_query=0;
+
+    for(auto a:(brief_information_of_game_list[7])) std::free(a);
+    std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[7]);
 
     query->exec(transaction_begin);
 
@@ -766,12 +763,11 @@ bool Qquery_to_database::preferential_query(QString discount)
                              "FROM `game`\n"
                              "WHERE\n"
                              "CAST(SUBSTRING_INDEX(`new_price`, 'S$', -1) AS DECIMAL(10, 2)) <=\n"
-                             ":discount * CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2))\n"
+                             "0.5 * CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2))\n"
                              "ORDER BY\n"
                              "CAST(SUBSTRING_INDEX(`new_price`, 'S$', -1) AS DECIMAL(10, 2)) /\n"
                              "CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2)) ASC;";
     query->prepare(preferential_query_sql);
-    query->bindValue(":discount",dis);
     query->exec();
     create_information_of_game(7);
     query->exec(transaction_submission);

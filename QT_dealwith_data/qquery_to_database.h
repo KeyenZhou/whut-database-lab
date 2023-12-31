@@ -25,7 +25,7 @@
 
 
 
-class User;
+class HUser;
 
 class Translation
 {
@@ -117,8 +117,8 @@ private:
     QString new_product_query_sql;                                                  //新品查询函数的sql语句
     QString preferential_query_sql;                                                 //优惠查询函数的sql语句
     std::vector<std::vector<int>*> information_game_sequence;                       //储存排序信息的数组列表
-    QSqlQuery* query;                                                                //查询结构体
-    QSqlDatabase* connect_to_stream;                                                 //连接结果体
+    QSqlQuery *query;                                                                //查询结构体
+    QSqlDatabase *connect_to_stream;                                                 //连接结果体
 
 
     std::vector<Brief_information_of_game*> brief_information_of_game_list[8];      //所查询的简略游戏信息结构体的列表
@@ -169,7 +169,7 @@ public:
 
     void initialization();                                                          //初始化
 
-    bool connection(User* user);                                                    //连接
+    bool connection(HUser* user);                                                              //连接
 
 
     //0成功，1失败
@@ -201,7 +201,7 @@ public:
 };
 
 
-class User
+class HUser
 {
 private:
     int     user_id;
@@ -219,11 +219,11 @@ private:
     const QString transaction_submission ="COMMIT";
     const QString transaction_rollback   ="ROLLBACK;";
 public:
-    User();
-    ~User();
-
+    HUser();
+    ~HUser();
     QSqlQuery* get_query();
     QSqlDatabase* get_connect_to_steam();
+
 
     int test();
 

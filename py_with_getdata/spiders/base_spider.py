@@ -21,35 +21,42 @@ from utils.helpers import find_appid_in_game_library
 from utils.helpers import parse_date
 import logging
 from utils.helpers import extract_numbers_with_comma_and_dot
+from utils.helpers import find_appid_in_game
 
 logging.basicConfig(filename=r'logs/spider.log', level=logging.ERROR)
 
 
 def get_game_library(db: mysql.connections):
-    cursor = db.cursor()
+    for i in range(1, url_config['game_library_num'] + 1):
+        state_code = get_game_page(db, i)
+        if state_code != 200:
+            print(f"page {i} 连接超时: {state_code}")
+            time.sleep(60)
+            get_game_page(db, i)
+
+
+def get_game_page(db: mysql.connections.Connection, index: int) -> int:
     sql = '''
         INSERT INTO game_library (AppID, game_name) VALUES (%s,%s);
     '''
-    for i in range(1, url_config['game_library_num'] + 1):
-        try:
-            url = url_config['game_library_url'].format(i)
-            response = requests.get(url=url, **web_config)
-            if response.status_code == 200:
-                response.encoding = 'utf-8'
-                soup = BeautifulSoup(response.text, 'lxml')
-                table = soup.find('div', id='search_resultsRows')
-                for App in table.find_all('a', recursive=False):
-                    AppID = App.get('data-ds-appid')
-                    AppName = App.find('span', class_='title')
-                    if AppID and AppName:
-                        insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
-            else:
-                print(f"page {i} 连接超时: {response.status_code}")
-                time.sleep(60)
-        except Exception as e:
-            logging.error("An error occurred: %s", str(e), exc_info=(type(e), e, e.__traceback__))
-
-    cursor.close()
+    url = url_config['game_library_url'].format(index)
+    response = requests.get(url=url, **web_config)
+    if response.status_code == 200:
+        response.encoding = 'utf-8'
+        soup = BeautifulSoup(response.text, 'lxml')
+        table = soup.find('div', id='search_resultsRows')
+        for App in table.find_all('a', recursive=False):
+            AppID = App.get('data-ds-appid')
+            AppName = App.find('span', class_='title')
+            if AppID and AppName:
+                try:
+                    insert_sql(db, sql, (int(AppID.strip()), AppName.text.strip()))
+                except Exception as e:
+                    print(f"{AppID}, {AppName} 无法被解析")
+                    print(f"Error: {e}")
+        return 200
+    else:
+        return 0
 
 
 # 爬取每周排行榜
@@ -146,7 +153,7 @@ def get_month_rank(db: mysql.connections.Connection):
     '''
     try:
         # 获取一年中所有月份的名称
-        months = calendar.month_name[1:5]
+        months = calendar.month_name[1:12]
         for month in months:
             url = url_config['month_rank_url'].format(month)
             driver = webdriver.Chrome()
@@ -327,19 +334,53 @@ def get_detail(db: mysql.connections.Connection):
     AppIDs = find_appid_in_game_library(db)
     for AppID in AppIDs:
         status = static_get_game_details(db, AppID)
-        while status != 200:
+        if status != 200:
             print(f"SSL error in {AppID}")
             time.sleep(60)
-            status = static_get_game_details(db, AppID)
+            static_get_game_details(db, AppID)
 
 
-def static_get_game_details(db: mysql.connections.Connection, AppID: int) -> int:
+def fix(db: mysql.connections.Connection):
+    AppID_all = find_appid_in_game_library(db)
+    AppID_have = find_appid_in_game(db)
+    AppID_not_have = list(set(AppID_all) - set(AppID_have))
+    print(AppID_not_have)
+    for AppID in AppID_not_have:
+        status = static_get_game_details(db, AppID)
+        if status != 200:
+            print(f"SSL error in {AppID}")
+            time.sleep(60)
+            static_get_game_details(db, AppID)
+
+
+def fool_fix(db: mysql.connections.Connection):
+    AppID_all = find_appid_in_game_library(db)
+    AppID_have = find_appid_in_game(db)
+    AppID_not_have = list(set(AppID_all) - set(AppID_have))
+    print(AppID_not_have)
+    for AppID in AppID_not_have:
+        try:
+            with open(f"data/{AppID}.html", "r", encoding='utf-8') as file:
+                html = file.read()
+            static_get_game_details(db, AppID, html)
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+def static_get_game_details(db: mysql.connections.Connection, AppID: int, html=None) -> int:
+    statu_code = 200
     try:
         url = url_config['game_detail_url'].format(AppID)
         response = requests.get(url=url, **web_config)
-        if response.status_code == 200:
-            response.encoding = 'utf-8'
-            soup = BeautifulSoup(response.text, 'lxml')
+        statu_code = response.status_code
+        if html is not None:
+            statu_code = 200
+        if statu_code == 200:
+            if html is None:
+                response.encoding = 'utf-8'
+                soup = BeautifulSoup(response.text, 'lxml')
+            else:
+                soup = BeautifulSoup(html, 'lxml')
             sql_insert_game = '''
                     insert into game values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 '''
@@ -369,13 +410,22 @@ def static_get_game_details(db: mysql.connections.Connection, AppID: int) -> int
                 All_reviews = All_reviews.get('data-tooltip-html').strip()
             else:
                 All_reviews = Recent_reviews
-            Old_price = soup.find('div', class_='discount_original_price').text.strip()
-            Old_price = extract_numbers_with_comma_and_dot(Old_price)
-            New_price = soup.find('div', class_='discount_final_price').text.strip()
-            New_price = extract_numbers_with_comma_and_dot(New_price)
+            Old_price = soup.find('div', class_='discount_original_price')
+            if Old_price:
+                Old_price = extract_numbers_with_comma_and_dot(Old_price.text.strip())
+            New_price = soup.find('div', class_='discount_final_price')
+            if New_price:
+                New_price = extract_numbers_with_comma_and_dot(New_price.text.strip())
+            if Old_price is None and New_price is None:
+                Old_price = New_price = extract_numbers_with_comma_and_dot(
+                    soup.find('div', class_='game_purchase_price').text.strip())
             Date = soup.select_one(
                 '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div.release_date > '
-                'div.date').text.strip()
+                'div.date')
+            if Date is None:
+                Date = '1970-01-01'
+            else:
+                Date = Date.text.strip()
             print(AppID, Date)
             issue_date = parse_date(Date)
             language = soup.find('table', class_='game_language_options').prettify()
@@ -383,11 +433,18 @@ def static_get_game_details(db: mysql.connections.Connection, AppID: int) -> int
             developer = soup.select_one('#developers_list > a').text.strip()
             publisher = soup.select_one(
                 '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div:nth-child(4) > '
-                'div.summary.column > a').text.strip()
+                'div.summary.column > a')
+            if publisher is not None:
+                publisher = publisher.text.strip()
+            else:
+                publisher = developer
             developer_url = soup.select_one('#developers_list').find('a').get('href')
-            publisher_url = soup.select_one(
-                '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div:nth-child(4) > '
-                'div.summary.column').find('a').get('href')
+            if publisher != developer:
+                publisher_url = soup.select_one(
+                    '#game_highlights > div.rightcol > div > div.glance_ctn_responsive_left > div:nth-child(4) > '
+                    'div.summary.column').find('a').get('href')
+            else:
+                publisher_url = developer_url
             publisher_id = find_dev(db, publisher, publisher_url)
             developer_id = find_dev(db, developer, developer_url)
 
@@ -428,13 +485,13 @@ def static_get_game_details(db: mysql.connections.Connection, AppID: int) -> int
                 insert_sql(db, sql_insert_game_to_tag, (AppID, tag_id))
             static_content(db, AppID)
             print(f"成功插入{game_name}")
-            return 200
+            return statu_code
         else:
-            return 0
+            return statu_code
     except Exception as e:
         print({f"插入{AppID}失败"})
         logging.error("An error occurred: %s", str(e), exc_info=(type(e), e, e.__traceback__))
-        return 0
+        return statu_code
 
 
 def static_content(db: mysql.connections.Connection, AppID: int):

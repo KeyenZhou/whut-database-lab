@@ -146,6 +146,23 @@ def find_appid_in_game_library(db: mysql.connections.Connection) -> list:
     return results
 
 
+def find_appid_in_game(db: mysql.connections.Connection) -> list:
+    sql = '''
+    select AppID from game
+    '''
+    results = []
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    except Exception as e:
+        print(f"Error while fetching game, error: {e}")
+    finally:
+        cursor.close()
+    results = [result[0] for result in results]
+    return results
+
+
 def parse_date(date_string):
     try:
         # 尝试使用 dateutil.parser.parse 解析
@@ -158,7 +175,17 @@ def parse_date(date_string):
             parsed_date = datetime.strptime(date_string, chinese_date_format)
             return parsed_date.strftime("%Y-%m-%d")
         except ValueError:
-            return None
+            # 尝试不包含日
+            try:
+                match = re.match(r'(\d{4}) 年 (\d{1,2}) 月', date_string)
+                if match:
+                    year, month = map(int, match.groups())
+                    # 默认为每月的第一天
+                    day = 1
+                    parsed_date = datetime(year, month, day)
+                    return parsed_date.strftime("%Y-%m-%d")
+            except ValueError:
+                return None
 
 
 # 转换money

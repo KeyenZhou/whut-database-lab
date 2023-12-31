@@ -1,0 +1,2371 @@
+"use strict";
+
+
+function ShowEmbedWidget( )
+{
+	$J('#widget_create').show();
+	$J('#widget_finished').hide();
+
+	var $Content = $J('#EmbedModal');
+	$Content.detach();
+	$Content.show();
+
+	var deferred = new jQuery.Deferred();
+	var fnOK = function() { deferred.resolve(); };
+
+	var Modal = _BuildDialog( "\u521b\u5efa Widget \u4ee5\u5d4c\u5165\u7f51\u7ad9", $Content, [], fnOK, {} );
+	deferred.always( function() { Modal.Dismiss(); } );
+	Modal.Show();
+
+	// attach the deferred's events to the modal
+	deferred.promise( Modal );
+
+	Modal.always(
+		function() {
+			// save it away again for later
+			$Content.hide();
+			$J(document.body).append( $Content );
+		}
+	);
+}
+
+function ShowShareDialog( )
+{
+	var $Content = $J('#ShareModal');
+	$Content.detach();
+	$Content.show();
+
+	ShowAlertDialog( "\u5206\u4eab", $Content).always(
+		function() {
+			// if results field exists clear it
+			$Content.find('#shareDialogResult').text('');
+
+			// save it away again for later
+			$Content.hide();
+			$J(document.body).append( $Content );
+		}
+	);
+
+}
+
+function CreateWidget( nAppId )
+{
+	$J('#widget_create').hide();
+
+	var nSubId = $J('input[name=w_subid]').val();
+	if( !nSubId )
+		nSubId = $J('input:radio[name=w_rsubid]:checked').val();
+
+	var strDesc = $J('textarea[name=w_text]').val();
+
+	var strWidgetURL;
+	if( nSubId )
+		strWidgetURL = 'https://store.steampowered.com/widget/' + nAppId + '/' + nSubId + '/';
+	else
+		strWidgetURL = 'https://store.steampowered.com/widget/' + nAppId + '/';
+
+	if( strDesc )
+		strWidgetURL = strWidgetURL + '?t=' + encodeURIComponent( strDesc );
+
+	var strWidgetCode = '<iframe src="' + strWidgetURL + '" frameborder="0" width="646" height="190"></iframe>';
+
+	var $iframe = $J(strWidgetCode);
+
+	$J('#widget_container').empty();
+	$J('#widget_container').append($iframe);
+	$J('#widget_code').val( strWidgetCode );
+
+	$J('#widget_finished').show();
+}
+
+function InitQueueControls( store_appid, steamworks_appid, next_in_queue_appid, snr )
+{
+	var $FollowBtn = $J('.queue_control_button.queue_btn_follow .queue_btn_inactive');
+	var $UnFollowBtn = $J('.queue_control_button.queue_btn_follow .queue_btn_active');
+	var $IgnoreBtn = $J('.queue_control_button.queue_btn_ignore .queue_btn_inactive');
+	var $UnIgnoreBtn = $J('.queue_control_button.queue_btn_ignore .queue_btn_active');
+
+	var $IgnoreMenuBtn = $J('#queue_ignore_menu_arrow');
+	var $IgnoreMenu = $J('#queue_btn_ignore_menu');
+	var $IgnoreMenuOption_NotInterested = $J('#queue_ignore_menu_option_not_interested' );
+	var $IgnoreMenuOption_OwnedElsewhere = $J('#queue_ignore_menu_option_owned_elsewhere' );
+
+	var funcUpdateIgnoredReasonClasses = function() {
+		$IgnoreMenu.removeClass( "not_interested owned_elsewhere" );
+		var curIgnoredReason = $IgnoreMenu.data( "ignoredreason" );
+		if ( curIgnoredReason !== undefined )
+		{
+			$IgnoreMenuBtn.removeClass( "queue_btn_inactive" );
+			$IgnoreMenuBtn.addClass( "queue_btn_active" );
+			switch( curIgnoredReason )
+			{
+				case 0:
+					$IgnoreMenu.addClass( "not_interested" );
+					break;
+				case 2:
+					$IgnoreMenu.addClass( "owned_elsewhere" );
+					break;
+			}
+		}
+	};
+	funcUpdateIgnoredReasonClasses();
+
+	var funcIgnoreGame = function( ignore_reason ) {
+		$J.post( 'https://store.steampowered.com/recommended/ignorerecommendation/', {
+			sessionid: g_sessionID,
+			appid: store_appid,
+			snr: snr,
+			ignore_reason: ignore_reason
+		}).done( function( data ) {
+			$IgnoreBtn.hide();
+			$UnIgnoreBtn.show();
+
+			$IgnoreMenu.data( "ignoredreason", ignore_reason );
+			funcUpdateIgnoredReasonClasses();
+
+			GDynamicStore.InvalidateCache();
+			if ( data && data.nSaleTaskCompleted ) { NewStickerPackModal( '标记“不感兴趣”的产品' ); } // SummerSale2017
+		}).fail( function( jqXHR ) {
+			ShowAlertDialog( '忽略应用', '在保存您的更改时出现问题。请稍后重试。' );
+		});
+	};
+
+	$IgnoreBtn.click( function() {
+		funcIgnoreGame( 0 );
+	} );
+	$IgnoreMenuOption_NotInterested.click( function() {
+		funcIgnoreGame( 0 );
+	} );
+	$IgnoreMenuOption_OwnedElsewhere.click( function() {
+		funcIgnoreGame( 2 );
+	} );
+
+	$UnIgnoreBtn.click( function() {
+		$J.post( 'https://store.steampowered.com/recommended/ignorerecommendation/', {
+			sessionid: g_sessionID,
+			appid: store_appid,
+			snr: snr,
+			remove: 1
+		}).done( function() {
+			$IgnoreBtn.show();
+			$UnIgnoreBtn.hide();
+			$IgnoreMenu.removeClass( "not_interested owned_elsewhere" );
+			$IgnoreMenuBtn.removeClass( "queue_btn_active" );
+			$IgnoreMenuBtn.addClass( "queue_btn_inactive" );
+			GDynamicStore.InvalidateCache();
+		}).fail( function() {
+			ShowAlertDialog( '忽略应用', '在保存您的更改时出现问题。请稍后重试。' );
+		});
+	});
+
+	$FollowBtn.click( function() {
+		$J.post( 'https://store.steampowered.com/explore/followgame/', {
+			sessionid: g_sessionID,
+			appid: steamworks_appid
+		}).done( function() {
+			$FollowBtn.hide();
+			$UnFollowBtn.show();
+		}).fail( function() {
+			ShowAlertDialog( '关注', '在保存您的更改时出现问题。请稍后重试。' );
+		});
+	});
+
+	$UnFollowBtn.click( function() {
+		$J.post( 'https://store.steampowered.com/explore/followgame/', {
+			sessionid: g_sessionID,
+			appid: steamworks_appid,
+			unfollow: 1
+		}).done( function() {
+			$FollowBtn.show();
+			$UnFollowBtn.hide();
+		}).fail( function() {
+			ShowAlertDialog( '关注', '在保存您的更改时出现问题。请稍后重试。' );
+		});
+	});
+
+	// discovery queue settings dialog
+	var bQueueIsValid = true;
+	var $NextInQueueBtn = $J('.btn_next_in_queue_trigger');
+
+	$NextInQueueBtn.click( function() {
+		if ( bQueueIsValid )
+			$J('#next_in_queue_form').submit();
+		else
+			window.location = 'https://store.steampowered.com/explore/startnew';
+	});
+
+	$J('a.dq_settings_link').click( function() {
+		CDiscoveryQueue.ShowCustomizeDialog( function( data ) {
+			if ( data && data.queue && ( data.queue.indexOf( store_appid ) == -1 ||
+				( next_in_queue_appid && data.queue.indexOf( next_in_queue_appid ) == -1 ) ) )
+			{
+				ShowConfirmDialog( '定制您的探索队列', '我们已经根据您的定制设置为您打造了新的探索队列。现在您希望做什么？',
+					'开始探索新的队列','留在这里'
+				).done( function() {
+					window.location = 'https://store.steampowered.com/explore/startnew/' + g_eDiscoveryQueueType + '/';
+				});
+				bQueueIsValid = false;
+			}
+			else
+			{
+				bQueueIsValid = true;
+			}
+		}, g_eDiscoveryQueueType );
+	} );
+}
+
+
+function InitAutocollapse()
+{
+	$J('.game_page_autocollapse').each( function() {
+		var content = this;
+		var $Content = $J(content);
+		$Content.wrap( $J('<div/>', {'class': 'game_page_autocollapse_ctn' } ) );
+
+		var $Container = $Content.parent();
+
+		var $ReadMore = $J('<div/>', {'class': 'game_page_autocollapse_readmore' }).text( '展开阅读' );
+		var $Fade = $J('<div/>', {'class': 'game_page_autocollapse_fade' } ).append( $ReadMore );
+		$Container.append( $Fade );
+
+		var nInterval = 0;
+		var nMaxHeight = parseInt( $Content.css('max-height') );
+		var bMaxHeightSet = true;
+
+		$Content.on( 'gamepage_autocollapse_expand', function() {
+			if ( $Container.hasClass( 'collapsed' ) )
+			{
+				$Container.removeClass( 'collapsed' );
+				$Container.addClass( 'expanded' );
+
+				if ( bMaxHeightSet )
+				{
+					$Content.animate( {'max-height': content.scrollHeight + 20 + 'px'}, 'fast', null, function() { $Content.css('max-height', 'none' ); } );
+				}
+				window.clearInterval( nInterval );
+			}
+		});
+
+		$ReadMore.click( function() { $Content.trigger('gamepage_autocollapse_expand'); } );
+
+		var fnCheckHeight = function ()	{
+			if ( content.scrollHeight > nMaxHeight + 30 )
+			{
+				$Content.css( 'max-height', nMaxHeight + 'px' );
+				$Container.addClass( 'collapsed' );
+				window.clearInterval( nInterval );
+				bMaxHeightSet = true;
+			}
+			else if ( bMaxHeightSet )
+			{
+				$Content.css( 'max-height', 'none' );
+				bMaxHeightSet = false;
+			}
+		};
+
+		nInterval = window.setInterval( fnCheckHeight, 250 );
+		fnCheckHeight();
+
+	});
+}
+
+function DefaultRecScoreFactory( nOwnedPenalty )
+{
+	return function DefaultRecScore( i, unAppID )
+	{
+		if ( GDynamicStore.BIsAppIgnored( unAppID ) )
+			return null;
+		else if ( GDynamicStore.BIsAppOwned( unAppID, false ) )
+			return nOwnedPenalty + i;
+		else
+			return i;
+	};
+}
+
+function ShuffleRecScore( i, unAppID )
+{
+	var nScore = 0;
+	var nOwnedPenalty = 5;
+
+	if ( GDynamicStore.BIsAppIgnored( unAppID ) )
+		return null;
+
+	if ( GDynamicStore.BIsAppOwned( unAppID, false ) )
+		nScore += nOwnedPenalty;
+
+	// shuffle a little
+	nScore += ( Math.sqrt(i) + 2 ) * Math.random();
+	nScore += Math.sqrt( i );
+
+	return nScore;
+}
+
+
+function RenderRecommendBlock( rgRecommendedAppIDs, strAppURL, elTarget, fnRecScore )
+{
+	var rgRecommendationsToShow = [];
+	var fnScore = fnRecScore || DefaultRecScoreFactory( 3 );
+	var bUseTabletScreenMode = window.UseTabletScreenMode && window.UseTabletScreenMode(); 
+	var strViewAllLink = "";
+
+	if ( bUseTabletScreenMode ) 
+	{
+		var $elBlock = elTarget.closest( 'div.block' );
+		var $elAnchor = $elBlock ? $J( 'a.deck_view_all_action_link', $elBlock ) : null;
+		if ( $elAnchor && $elAnchor.attr('href') !== undefined )
+			strViewAllLink = $elAnchor.attr('href');
+
+					}
+
+	for ( var i = 0; i < rgRecommendedAppIDs.length; i++ )
+	{
+		var unAppID = rgRecommendedAppIDs[i];
+		var nScore = fnScore( i, unAppID );
+
+		if ( nScore !== null )
+			rgRecommendationsToShow.push( { score: nScore, appid: unAppID, orig: i } );
+	}
+
+	rgRecommendationsToShow.sort( function( a, b ) { return a.score - b.score; } );
+
+	rgRecommendationsToShow = rgRecommendationsToShow.slice( 0, 12 );
+
+	for ( var i = 0; i < rgRecommendationsToShow.length; i++ )
+	{
+		var unAppID = rgRecommendationsToShow[i].appid;
+		var rgItemData = GStoreItemData.rgAppData[ unAppID ];
+		if ( !rgItemData )
+			continue;
+
+		var params = {'class': 'small_cap',
+			'data-ds-appid': unAppID,
+			'href': GStoreItemData.GetAppURL( unAppID, strAppURL )
+		};
+
+				if ( bUseTabletScreenMode && strViewAllLink !== "" ) 
+		{
+			const panelString = '{"onOptionsActionDescription":"\u67e5\u770b\u5168\u90e8","onOptionsButton":"window.location=\'%1$s\'"}';
+			params['data-panel'] = panelString.replace( '%1$s', strViewAllLink );
+		}
+
+		if ( rgItemData['steam_deck_compat_category'] !== undefined )
+		{
+			params['data-ds-steam-deck-compat-category'] = rgItemData['steam_deck_compat_category'];
+		}
+
+		var $CapCtn = $J('<a/>', params );
+		GStoreItemData.BindHoverEvents( $CapCtn, unAppID, null );
+
+		$CapCtn.append( $J('<img/>', {src: rgItemData.small_capsulev5, 'class': 'small_cap_img' } ) );
+		$CapCtn.append( $J('<h4/>').html( rgItemData.name ) );
+		$CapCtn.append( $J(rgItemData.discount_block).addClass( 'discount_block_inline') );
+
+		elTarget.append( $CapCtn );
+	}
+	GDynamicStoreHelpers.AddSNRDepthParamsToCapsuleList( elTarget.children() );
+	GDynamicStore.DecorateDynamicItems( elTarget );
+	elTarget.append( $J('<div/>', { style: 'clear: left;' } ) );
+	elTarget.trigger('v_contentschanged');
+}
+
+function RenderMoreLikeThisBlock( rgRecommendedAppIDs, bUseShuffle )
+{
+	if ( !rgRecommendedAppIDs || !rgRecommendedAppIDs.length > 0 || !$J('#recommended_block_content').length )
+	{
+		$J('#recommended_block').hide();
+		return;
+	}
+
+	RenderRecommendBlock( rgRecommendedAppIDs, 'recommended', $J('#recommended_block_content'), bUseShuffle ? ShuffleRecScore : DefaultRecScoreFactory( 15 ) );
+}
+					
+function RenderAccessoriesBlock( rgAccessoryAppIDs )
+{
+	if ( !rgAccessoryAppIDs || !rgAccessoryAppIDs.length > 0 || !$J('#accessory_block_content').length )
+	{
+		$J('#accessory_block').hide();
+		return;
+	}
+
+	RenderRecommendBlock( rgAccessoryAppIDs, 'accessories', $J('#accessory_block_content') );
+
+	function scrollToAccessoriesIfNeeded()
+	{
+		if ( window.location.hash == "#accessories" )
+		{
+			document.querySelector( "#accessory_block" ).scrollIntoView( {
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'center',
+			} );
+
+			document.querySelector( "#accessory_block" ).classList.add( "highlighted" );
+		}
+		else
+		{
+			document.querySelector( "#accessory_block" ).classList.remove( "highlighted" );
+		}
+	}
+
+	window.addEventListener( "hashchange", scrollToAccessoriesIfNeeded, false );
+	window.addEventListener( "load", scrollToAccessoriesIfNeeded, false );
+}
+
+function RenderFranchiseAppBlock( rgFranchiseAppIDs )
+{
+		rgFranchiseAppIDs = rgFranchiseAppIDs.filter( function( appid ) { return !!GStoreItemData.rgAppData[appid]; } );
+	if( !rgFranchiseAppIDs || !rgFranchiseAppIDs.length > 0 || !$J('#franchise_app_block_content').length )
+	{
+		$J('#franchise_block').hide();
+		return;
+	}
+
+	RenderRecommendBlock( rgFranchiseAppIDs, 'recommend_franchise', $J('#franchise_app_block_content') );
+}
+
+function RenderMoreDLCFromBaseGameBlock( rgMoreDLCsFromBaseGameAppIDs )
+{
+	if( !rgMoreDLCsFromBaseGameAppIDs || !rgMoreDLCsFromBaseGameAppIDs.length > 0 || !$J('#moredlcfrombasegame_block_content').length )
+	{
+		$J('#moredlcfrombasegame_block').hide();
+		return;
+	}
+
+	RenderRecommendBlock( rgMoreDLCsFromBaseGameAppIDs, 'other_dlc', $J('#moredlcfrombasegame_block_content') );
+}
+
+
+function ShowEULA( elLink )
+{
+	if ( window.UseTabletScreenMode && window.UseTabletScreenMode() )
+	{
+		// it's a better user experience on Deck if we navigate to the EULA instead of opening a new window
+		window.location = elLink.href;
+	}
+	else 
+	{
+		var win = window.open( elLink.href,'eula','height=584,width=475,resize=yes,scrollbars=yes');
+		win && win.focus();
+	}
+}
+
+
+// formerly user_reviews_store.js
+
+var g_recommendationContents = [ 'friend', 'summary', 'recent_short', 'all', 'positive', 'negative', 'recent', 'funny' ];
+
+
+function OnRecommendationVotedUp( recommendationid )
+{
+	for ( var i = 0; i < g_recommendationContents.length; ++i )
+	{
+		$J( '#RecommendationVoteUpBtn' + g_recommendationContents[i] + recommendationid ).addClass( 'btn_active' );
+		$J( '#RecommendationVoteDownBtn' + g_recommendationContents[i] + recommendationid ).removeClass( "btn_active" );
+		$J( '#RecommendationVoteTagBtn' + g_recommendationContents[i] + recommendationid + '_' + 1 ).removeClass( 'btn_active' );
+	}
+}
+
+function OnRecommendationVotedDown( recommendationid )
+{
+	for ( var i = 0; i < g_recommendationContents.length; ++i )
+	{
+		$J( '#RecommendationVoteUpBtn' + g_recommendationContents[i] + recommendationid ).removeClass( 'btn_active' );
+		$J( '#RecommendationVoteDownBtn' + g_recommendationContents[i] + recommendationid ).addClass( "btn_active" );
+		$J( '#RecommendationVoteTagBtn' + g_recommendationContents[i] + recommendationid + '_' + 1 ).removeClass( 'btn_active' );
+	}
+}
+
+function OnRecommendationVotedTag( recommendationid, tagID, bRateUp )
+{
+	for ( var i = 0; i < g_recommendationContents.length; ++i )
+	{
+		if ( bRateUp )
+		{
+			$J( '#RecommendationVoteTagBtn' + g_recommendationContents[i] + recommendationid + '_' + tagID ).addClass( 'btn_active' );
+			$J( '#RecommendationVoteUpBtn' + g_recommendationContents[i] + recommendationid ).removeClass( 'btn_active' );
+			$J( '#RecommendationVoteDownBtn' + g_recommendationContents[i] + recommendationid ).removeClass( "btn_active" );
+		}
+		else
+		{
+			$J( '#RecommendationVoteTagBtn' + g_recommendationContents[i] + recommendationid + '_' + tagID ).removeClass( 'btn_active' );
+		}
+	}
+}
+
+function OnRecommendationAward( recommendationid, award )
+{
+	for ( var i = 0; i < g_recommendationContents.length; ++i )
+	{
+		var review = $J( "#ReviewContent" + g_recommendationContents[i] + recommendationid );
+		var rewardsCtn = review.find( ".review_award_ctn" );
+		if ( rewardsCtn.length != 0 )
+		{
+			var bFoundExisting = false;
+			var rewards = rewardsCtn.find( ".review_award" );
+			for ( var j = 0; j < rewards.length; ++j )
+			{
+				var reward = $J( rewards[j] );
+				if ( reward.data( "reaction" ) == award )
+				{
+					bFoundExisting = true;
+
+					var count = parseInt( reward.data( "reactioncount" ) );
+					var countElem = reward.find( ".review_award_count" );
+					countElem.text( count + 1 );
+
+					reward.data( "reactioncount", count + 1 );
+					break;
+				}
+			}
+
+			if ( !bFoundExisting )
+			{
+				var reward = $J( "<div>", { class: "review_award" } );
+				var img = $J( "<img>", { class: "review_award_icon tooltip", src: "https://store.akamai.steamstatic.com/public/images/loyalty/reactions/still/" + award + ".png" } );
+				reward.append( img );
+
+				var countElem = $J( "<span>", { class: "review_award_count", text: "1" } );
+				reward.append( countElem );
+
+				reward.data( "reaction", award );
+				reward.data( "reactioncount", 1 );
+
+				rewardsCtn.append( reward );
+				review.find( ".vote_info" ).show();
+			}
+		}
+	}
+}
+
+function RequestCurrentUserRecommendationVotes( recommendationIDs )
+{
+	if ( recommendationIDs.length == 0 )
+	{
+		return;
+	}
+
+	$J.post( 'https://store.steampowered.com//userreviews/ajaxgetvotes/', {
+			'recommendationids' : recommendationIDs
+		}
+	).done( function( response ) {
+			if ( response.success == 1 )
+			{
+				var votes = response.votes;
+				for ( var i = 0; i < votes.length; ++i )
+				{
+					var vote = votes[i];
+					if ( vote.voted_up )
+					{
+						OnRecommendationVotedUp( vote.recommendationid );
+					}
+					else if ( vote.voted_down )
+					{
+						OnRecommendationVotedDown( vote.recommendationid );
+					}
+					if ( vote.voted_funny )
+					{
+						OnRecommendationVotedTag( vote.recommendationid, 1, true );
+					}
+				}
+			}
+		} );
+}
+
+function UserReviewVoteUp( bLoggedIn, strLoginURL, id )
+{
+	if ( !bLoggedIn )
+	{
+		var dialog = ShowConfirmDialog( '错误', '您必须登录后才能执行该操作。', '登录' );
+		dialog.done( function() {
+			top.location.href = strLoginURL;
+		} );
+		return;
+	}
+
+	UserReview_Rate( id, true, 'https://store.steampowered.com/',
+		function( rgResults ) {
+			if ( rgResults.nSaleTaskCompleted ) { NewStickerPackModal( '将一篇评测标记为有价值… 或无价值');}
+			OnRecommendationVotedUp( id );
+		}
+	);
+}
+
+function UserReviewVoteDown( bLoggedIn, strLoginURL, id )
+{
+	if ( !bLoggedIn )
+	{
+		var dialog = ShowConfirmDialog( '错误', '您必须登录后才能执行该操作。', '登录' );
+		dialog.done( function() {
+			top.location.href = strLoginURL;
+		} );
+		return;
+	}
+
+	UserReview_Rate( id, false, 'https://store.steampowered.com/',
+		function( rgResults ) {
+			if ( rgResults.nSaleTaskCompleted ) { NewStickerPackModal( '将一篇评测标记为有价值… 或无价值');}
+			OnRecommendationVotedDown( id );
+		}
+	);
+}
+
+function UserReviewVoteTag( bLoggedIn, strLoginURL, id, tagID, elemID )
+{
+	if ( !bLoggedIn )
+	{
+		var dialog = ShowConfirmDialog( '错误', '您必须登录后才能执行该操作。', '登录' );
+		dialog.done( function() {
+			top.location.href = strLoginURL;
+		} );
+		return;
+	}
+
+	var elem = $J( '#' + elemID );
+	var bRateUp = !elem.hasClass( 'btn_active' );
+	UserReview_VoteTag( id, tagID, bRateUp, 'https://store.steampowered.com/',
+		function( rgResults ) {
+			OnRecommendationVotedTag( id, tagID, bRateUp );
+		}
+	);
+}
+
+function UserReviewSetQuality( id )
+{
+	var quality = $J( "#ReviewQuality" + id ).val();
+	UserReview_Moderate_SetQuality( id, quality, 'https://store.steampowered.com/',
+		function( rgResults ) {
+		}
+	);
+}
+
+function UserReviewShowMore( id, context )
+{
+	$J('#ReviewContent'+context+id).parent().removeClass('partial');
+	$J('#ReviewContent'+context+id).parent().addClass('expanded');
+}
+
+function LoadMoreReviews( appid, cursor, dayRange, startDate, endDate, context )
+{
+	$J( "#ViewAllReviews" + context ).remove();
+	$J( "#LoadMoreReviews" + context ).remove();
+	$J( "#LoadingMoreReviews" + context ).show();
+
+	var container = $J( "#Reviews_" + context );
+
+	var reviewType = $J('input[name="review_type"]:checked').val();
+	var purchaseType = $J('input[name="purchase_type"]:checked').val();
+	var language = $J('input[name="review_language"]:checked').val();
+	var filterOfftopicActivity = $J( "#reviews_offtopic_activity_checkbox" ).is( ":checked" ) ? 1 : 0;
+	var dateRangeType = $J('input[name="review_date_range"]:checked').val();
+	var summaryNumPositiveReviews = $J( "#review_summary_num_positive_reviews" ).val();
+	var summaryNumReviews = $J( "#review_summary_num_reviews" ).val();
+	var playtimeFilterMin = $J( "#app_reviews_playtime_range_min" ).val();
+	var playtimeFilterMax = $J( "#app_reviews_playtime_range_max" ).val();
+
+	var filteredReviewScore = $J( "#user_reviews_filter_score" );
+	filteredReviewScore.removeClass( "visible" );
+
+	$J.get( 'https://store.steampowered.com/appreviews/' + appid,{
+		'cursor' : cursor,
+		'day_range' : dayRange,
+		'start_date' : startDate,
+		'end_date' : endDate,
+		'date_range_type' : dateRangeType,
+		'filter' : context,
+		'language' : language,
+		'l' : 'schinese',
+		'review_type' : reviewType,
+		'purchase_type' : purchaseType,
+		'playtime_filter_min' : playtimeFilterMin,
+		'playtime_filter_max' : playtimeFilterMax,
+		'filter_offtopic_activity' : filterOfftopicActivity,
+		'summary_num_positive_reviews' : summaryNumPositiveReviews,
+		'summary_num_reviews' : summaryNumReviews
+	}).done( function( data ) {
+
+		RecordAJAXPageView( this.url );
+
+		if ( data.success == 1 )
+		{
+			$J( "#Reviews_loading" ).hide();
+			$J( "#Reviews_" + context ).show();
+
+			if ( cursor == "" || cursor == "*" )
+			{
+				var filteredReviewScore = $J( "#user_reviews_filter_score" );
+				if ( data.review_score )
+				{
+					filteredReviewScore.addClass( "visible" );
+					filteredReviewScore.html( data.review_score );
+				}
+				else
+				{
+					filteredReviewScore.removeClass( "visible" );
+				}
+			}
+			$J( "#LoadingMoreReviews" + context ).remove();
+
+			// remove duplicates
+			var recommendationIDs = [];
+			var temp = $J('<div></div>');
+			temp.append( data.html );
+			for ( var i = 0; i < data.recommendationids.length; ++i )
+			{
+				var recommendationid = data.recommendationids[i];
+				var elemID = "#ReviewContent" + context + recommendationid;
+				if ( $J( elemID ).length != 0 )
+				{
+					temp.find( elemID ).parent().remove();
+				}
+				else
+				{
+					recommendationIDs.push( recommendationid );
+				}
+			}
+
+			container.append( temp.children() );
+
+			if ( data.date_filter_text )
+			{
+				var dateFilterText = $J( "#review_selected_histogram_date_range_text" );
+				dateFilterText.text( data.date_filter_text );
+				dateFilterText.show();
+			}
+
+			// all dupes, request more
+			if ( data.recommendationids.length != 0 && recommendationIDs.length == 0 )
+			{
+				LoadMoreReviews(appid, data.cursor, data.dayrange, data.start_date, data.end_date, context );
+			}
+			else
+			{
+				CollapseLongReviews();
+				RequestCurrentUserRecommendationVotes( recommendationIDs );
+			}
+
+			// if customer is on a mobile size screen make content changes in the reviews section  
+			ReparentReviewsForSmallScreens();
+		}
+		else
+		{
+			ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + data.error );
+			$J( "#Reviews_" + context ).show();
+			$J( "#LoadingMoreReviews" + context ).remove();
+		}
+	} );
+}
+
+function SelectReviews( appid, context, reviewDayRange, startDate, endDate, forceClear )
+{
+	$J( "#ReviewsTab_summary" ).removeClass( "active" );
+	$J( "#ReviewsTab_all" ).removeClass( "active" );
+	$J( "#ReviewsTab_recent" ).removeClass( "active" );
+	$J( "#ReviewsTab_positive" ).removeClass( "active" );
+	$J( "#ReviewsTab_negative" ).removeClass( "active" );
+	$J( "#ReviewsTab_funny" ).removeClass( "active" );
+	$J( "#ReviewsTab_" + context ).addClass( "active" );
+
+	$J( "#Reviews_summary" ).hide();
+	$J( "#Reviews_all" ).hide();
+	$J( "#Reviews_recent" ).hide();
+	$J( "#Reviews_positive" ).hide();
+	$J( "#Reviews_negative" ).hide();
+	$J( "#Reviews_funny" ).hide();
+	$J( "#Reviews_loading" ).show();
+
+	var container = $J( "#Reviews_" + context );
+	if ( forceClear )
+	{
+		container.empty()
+	}
+	if ( container.children().length == 0 )
+	{
+		LoadMoreReviews( appid, "*", reviewDayRange, startDate, endDate, context );
+	}
+}
+
+function FilterReviewsToGraph( bCountAllReviews, startDate, endDate )
+{
+	if ( bCountAllReviews )
+	{
+		$J('#purchase_type_all').attr( 'checked', true );
+	}
+	else
+	{
+		$J('#purchase_type_steam').attr( 'checked', !bCountAllReviews );
+	}
+
+	$J('#review_start_date').val( startDate );
+	$J('#review_end_date').val( endDate );
+	if ( !$J('#review_date_range_histogram').attr( 'checked' ) && !$J('#review_date_range_exclude_histogram').attr( 'checked') )
+	{
+		$J('#review_date_range_histogram').attr('checked', true);
+	}
+	$J('#review_date_range_histogram').attr( 'disabled', false );
+	$J('#review_date_range_exclude_histogram').attr( 'disabled', false );
+	ShowFilteredReviews();
+}
+
+function FilterReviewsGraph( bCountAllReviews, startDate, endDate, bExclude )
+{
+	if ( bCountAllReviews )
+	{
+		$J('#purchase_type_all').attr( 'checked', true );
+	}
+	else
+	{
+		$J('#purchase_type_steam').attr( 'checked', !bCountAllReviews );
+	}
+
+	$J('#review_start_date').val( startDate );
+	$J('#review_end_date').val( endDate );
+
+	$J('#review_date_range_histogram').attr( 'disabled', false );
+	$J('#review_date_range_exclude_histogram').attr( 'disabled', false );
+
+	if ( bExclude )
+	{
+		$J('#review_date_range_exclude_histogram').attr( 'checked', true );
+	}
+	else
+	{
+		$J('#review_date_range_histogram').attr( 'checked', true );
+	}
+
+	ShowFilteredReviews();
+}
+
+function ClearReviewTypeFilter()
+{
+	$J('#review_type_all').attr( 'checked', true );
+	ShowFilteredReviews();
+}
+
+function ClearReviewPurchaseTypeFilter()
+{
+	$J('#purchase_type_all').attr( 'checked', true );
+	ShowFilteredReviews();
+}
+
+function ClearReviewLanguageFilter()
+{
+	$J('#review_language_all').attr( 'checked', true );
+	ShowFilteredReviews();
+}
+
+function ClearReviewDateRangeFilter()
+{
+	$J('#review_date_range_all').attr( 'checked', true );
+	ClearReviewDateFilter();
+}
+
+function EditUserReviewScorePreference()
+{
+	if ( g_AccountID == 0 )
+	{
+		ShowAlertDialog( '错误', '您必须登录后才能执行该操作。' );
+		return;
+	}
+	
+	$J.post(
+		'https://store.steampowered.com/account/edituserreviewscorepreference/', { sessionid: g_sessionID }
+	).done( function( response ) {
+		var dialogContent = $J( response.html );
+		var dialog = ShowAlertDialog( '评测分数设置', dialogContent, '取消' );
+	});
+}
+
+function SetUserReviewScorePreference( pref )
+{
+	if ( g_AccountID == 0 )
+	{
+		ShowAlertDialog( '错误', '您必须登录后才能执行该操作。' );
+		return;
+	}
+
+	var rgData = {
+		preference: pref,
+		sessionid : g_sessionID
+	};
+	$J.post( 'https://store.steampowered.com/account/saveuserreviewscorepreference', rgData ).done(
+		function( json )
+		{
+			var h = window.location.href.substr( 0, window.location.href.indexOf('#') );
+			window.location.href = h + '#app_reviews_hash';
+			window.location.reload( true );
+		}
+	).fail(
+		function( json )
+		{
+			ShowAlertDialog( "\u9519\u8bef", "\u60a8\u7684\u504f\u597d\u672a\u88ab\u4fdd\u5b58\u3002\u8bf7\u7a0d\u540e\u518d\u8bd5\u3002" );
+		}
+	);
+}
+
+function IntervalDistance( min1, max1, min2, max2 )
+{
+	return Math.max( 0, Math.max( min2 - max1, min1 - max2 ) );
+}
+
+function DrawPastEvents( flotRollup, rgPastEvents )
+{
+	var ctx = flotRollup.getCanvas().getContext("2d");
+	var rollupPoints = flotRollup.getData();
+	var seriesPositive = rollupPoints[0];
+	var axes = flotRollup.getAxes();
+	var dateOptions = { day: 'numeric', month: 'long', year: 'numeric', timeZone: "UTC" };
+
+	for ( var i = 0; i < rgPastEvents.length; ++i )
+	{
+		var event = rgPastEvents[i];
+		var midDate = ( event.start_date + ( event.end_date - event.start_date ) / 2 ) * 1000;
+
+		var o = flotRollup.pointOffset( { x: midDate, y: axes.yaxis.max } );
+
+		var topY = seriesPositive.yaxis.p2c( event.recommendations_up );
+
+		var eventIconID = flotRollup.getPlaceholder()[0].id + "_review_anomaly_" + event.start_date;
+		var eventIcon = $J( "#" + eventIconID );
+		var newStyle = {
+			left: (o.left - 6) + 'px',
+			top: (o.top - 10) + 'px'
+		};
+
+		if ( eventIcon.length == 0 )
+		{
+			eventIcon = $J( '<div/>', { id: eventIconID, class: 'review_event_graph_icon', style: JSON.stringify( newStyle ), html: '*' } );
+			eventIcon.data( 'startDate', event.start_date );
+			eventIcon.data( 'endDate', event.end_date );
+			var startDate = new Date( event.start_date * 1000 );
+			var endDate = new Date( event.end_date * 1000 );
+			var strToolTip = '检测到跑题评测活动：<br><br>' +	startDate.toLocaleDateString( undefined, dateOptions ) + " - " + endDate.toLocaleDateString( undefined, dateOptions ) + '<br><br>点击了解更多详情。';
+			eventIcon.data( 'tooltipContent', strToolTip );
+			eventIcon.v_tooltip();
+			flotRollup.getPlaceholder().append( eventIcon );
+		}
+		else
+		{
+			eventIcon.css( newStyle );
+		}
+
+		o.top += 10;
+
+		ctx.beginPath();
+		ctx.moveTo(o.left-1, o.top);
+		ctx.lineTo(o.left, topY);
+		ctx.lineTo(o.left+1, o.top);
+		ctx.lineTo(o.left-1, o.top);
+		ctx.fillStyle = "#fff";
+		ctx.fill();
+	}
+}
+
+function AddOrUpdatePastEvent( rgPastEvents, event )
+{
+	for ( var i = 0; i < rgPastEvents.length; ++i )
+	{
+		if ( rgPastEvents[i].start_date == event.start_date )
+		{
+			rgPastEvents[i].recommendations_up = Math.max( rgPastEvents[i].recommendations_up, event.recommendations_up );
+			return;
+		}
+	}
+
+	rgPastEvents.push( { start_date: event.start_date, end_date: event.end_date, recommendations_up: event.recommendations_up } );
+}
+
+function BuildReviewHistogram()
+{
+	if( $J( "#review_histograms_container" ).length == 0 )
+		return;
+
+	var appid = $J( "#review_appid" ).val();
+
+	var review_score_preference = 0;
+	if ( typeof GDynamicStore != 'undefined' )
+	{
+		review_score_preference = ( !GDynamicStore.s_preferences['review_score_preference'] ? 0 : GDynamicStore.s_preferences['review_score_preference'] );
+	}
+
+	$J.get( 'https://store.steampowered.com/appreviewhistogram/' + appid, { l: 'schinese', review_score_preference: review_score_preference }
+	).done( function( data ) {
+
+		$J( "#review_histograms_container" ).addClass( "has_data" );
+
+		// remove so we can draw to the canvas
+		$J( "#review_histograms_container" ).removeClass( "collapsed" );
+		$J( "#reviews_filter_options" ).removeClass( "graph_collapsed" );
+
+		var bCountAllReviews = data.count_all_reviews;
+		var bExpandGraph = data.expand_graph;
+		// language
+		var elemLanguageBreakdown = $J( "#review_language_breakdown" );
+
+		var numTotalDays = ( data.results.end_date - data.results.start_date ) / 86400;
+		var numReviewsRecent = 0;
+		for ( var i = 0; i < data.results.recent.length; ++i )
+		{
+			var recentDay = data.results.recent[i];
+			numReviewsRecent += recentDay.recommendations_up + recentDay.recommendations_down;
+		}
+
+		if ( numTotalDays < 7 )
+		{
+			$J( "#app_reviews_hash" ).addClass( "graph_hidden" );
+			$J( "#review_histogram_rollup_container" ).hide();
+			$J( "#review_histogram_rollup_section" ).addClass( "recent" );
+			$J( "#review_histogram_rollup_section" ).addClass( "hidden" );
+			$J( "#review_histogram_recent_section" ).hide();
+			return;
+		}
+		else if ( numReviewsRecent == 0 )
+		{
+			data.results.recent = null;
+			$J( "#review_histogram_rollup_section" ).addClass( "recent" );
+			$J( "#review_histogram_recent_section" ).hide();
+		}
+		else if ( numTotalDays < 30 )
+		{
+			$J( "#review_histogram_rollup_section" ).addClass( "recent" );
+			$J( "#review_histogram_recent_section" ).hide();
+
+			data.results.rollups = data.results.recent;
+			data.results.recent = null;
+			data.results.rollup_type = 'day';
+		}
+
+		var chartDataPositive = [];
+		var chartDataNegative = [];
+
+		var chartDataPositiveEvent = [];
+		var chartDataNegativeEvent = [];
+		var rgPastEventsRollup = [];
+		var rgPastEventsRecent = [];
+
+		for ( var i = 0; i < data.results.rollups.length; ++i )
+		{
+			var rollup = data.results.rollups[i];
+			var barDataUp = [ rollup.date * 1000, rollup.recommendations_up ];
+			var barDataDown = [ rollup.date * 1000, -rollup.recommendations_down ];
+			chartDataPositive.push( barDataUp );
+			chartDataNegative.push( barDataDown );
+
+			if ( data.past_events && data.past_events.length != 0 )
+			{
+				for ( var j = 0; j < data.past_events.length; ++j )
+				{
+					var event = data.past_events[j];
+					var rollupDateEnd = new Date( rollup.date * 1000 );
+					if ( data.results.rollup_type == 'week' )
+					{
+						rollupDateEnd = new Date( ( rollup.date + 86400*7 - 1 ) * 1000 );
+					}
+					else if ( data.results.rollup_type == 'month' )
+					{
+						rollupDateEnd.setMonth( rollupDateEnd.getMonth() + 1 );
+					}
+					if ( IntervalDistance( event.start_date, event.end_date, rollup.date, rollupDateEnd.getTime() / 1000 ) == 0 )
+					{
+						chartDataPositiveEvent.push( barDataUp );
+						chartDataNegativeEvent.push( barDataDown );
+
+						AddOrUpdatePastEvent( rgPastEventsRollup, { start_date: event.start_date, end_date : event.end_date, recommendations_up: rollup.recommendations_up } );
+						break;
+					}
+				}
+			}
+		}
+		var seriesRollup = [
+			{ label: "好评", color: "#66c0f4", fillColor: "#66c0f4", data: chartDataPositive },
+			{ label: "差评", color: "#A34C25", fillColor: "#A34C25", data: chartDataNegative },
+			{ label: "好评", color: "#FFFFFF", fillColor: "#FFFFFF", data: chartDataPositiveEvent },
+			{ label: "差评", color: "#FFFFFF", fillColor: "#FFFFFF", data: chartDataNegativeEvent },
+		];
+
+		var seriesRecent = null;
+		if ( data.results.recent )
+		{
+			chartDataPositive = [];
+			chartDataNegative = [];
+			chartDataPositiveEvent = [];
+			chartDataNegativeEvent = [];
+			for ( var i = 0; i < data.results.recent.length; ++i )
+			{
+				var recentDay = data.results.recent[i];
+				var barDataUp = [ recentDay.date * 1000, recentDay.recommendations_up ];
+				var barDataDown = [ recentDay.date * 1000, -recentDay.recommendations_down ];
+				chartDataPositive.push( barDataUp );
+				chartDataNegative.push( barDataDown );
+				if ( data.past_events && data.past_events.length != 0 )
+				{
+					for ( var j = 0; j < data.past_events.length; ++j )
+					{
+						var event = data.past_events[j];
+						if ( IntervalDistance( event.start_date, event.end_date, recentDay.date, recentDay.date + 86400 - 1 ) == 0 )
+						{
+							chartDataPositiveEvent.push( barDataUp );
+							chartDataNegativeEvent.push( barDataDown );
+
+							AddOrUpdatePastEvent( rgPastEventsRecent, { start_date: event.start_date, end_date : event.end_date, recommendations_up: recentDay.recommendations_up } );
+							break;
+						}
+					}
+				}
+			}
+			seriesRecent = [
+				{ color: "#66c0f4", label: "好评", data: chartDataPositive },
+				{ color: "#A34C25", label: "差评", data: chartDataNegative },
+				{ label: "好评", color: "#FFFFFF", fillColor: "#FFFFFF", data: chartDataPositiveEvent },
+				{ label: "差评", color: "#FFFFFF", fillColor: "#FFFFFF", data: chartDataNegativeEvent },
+			];
+		}
+
+		var options = {
+			series: {
+				stack: 0,
+				bars: {
+					show: 1,
+					fill: 1,
+					lineWidth: 0,
+					barWidth: 86400*1000 * 0.5,
+					align: "left"
+				},
+				lines: {
+					show: 0
+				},
+				highlightColor: 'rgb(255,255,255)'
+			},
+			legend: {
+				show: 0
+			},
+			xaxis: {
+				mode: "time",
+				timeformat: "%b %d",
+				tickLength: 0
+			},
+			yaxis: {
+				tickFormatter : function( val, axis ) {
+					return ( val < 0 ) ? -val : val;
+				},
+				tickLength: 0,
+				tickDecimals: 0
+			},
+			grid: {
+				hoverable: true,
+				clickable: true,
+				borderWidth: 0,
+				margin: 0,
+				mouseActiveRadius: 10,
+				autoHighlight: true,
+				markings: [ { yaxis: { from: 0, to: 0 }, color: "#4582A5" } ]
+			},
+			selection: {
+				mode: "x",
+				color: "#ffffff",
+			}
+		};
+
+		// week/month rollup
+		var rollupOptions = $J.extend( true, {}, options );
+		if ( data.results.rollup_type == 'week' )
+		{
+			if ( numTotalDays > 365 / 2 )
+			{
+				rollupOptions.xaxis.timeformat = "%b";
+			}
+			else
+			{
+				rollupOptions.xaxis.timeformat = "%b %d";
+			}
+			rollupOptions.series.bars.barWidth = 86400*1000 * 7 * 0.5;
+		}
+		else if ( data.results.rollup_type == 'month' )
+		{
+			rollupOptions.xaxis.timeformat = numTotalDays > 365 ? "%b %Y": "%b";
+			rollupOptions.series.bars.barWidth = 86400*1000 * 30 * 0.5;
+		}
+
+		rollupOptions.yaxis.autoscaleMargin = rgPastEventsRollup.length != 0 ? 0.2 : null;
+
+		var graphRollup =  $J( "#review_histogram_rollup" );
+		var flotRollup = $J.plot( graphRollup, seriesRollup, rollupOptions );
+
+		if ( rgPastEventsRollup.length != 0 )
+		{
+			var funcDrawPastEvents = function() {
+				DrawPastEvents( flotRollup, rgPastEventsRollup );
+			};
+			flotRollup.hooks.draw.push( funcDrawPastEvents );
+			funcDrawPastEvents();
+
+			$J("#review_graph_canvas").resize( funcDrawPastEvents );
+		}
+
+		// recent
+		var graphRecent = null;
+		if ( seriesRecent )
+		{
+			var recentOptions = $J.extend( true, {}, options );
+			recentOptions.series.bars.barWidth = 86400*1000 * 0.5;
+			recentOptions.xaxis.timeformat = "%b %d";
+						recentOptions.yaxis.autoscaleMargin = rgPastEventsRecent.length != 0 ? 0.2 : null;
+			var graphRecent =  $J( "#review_histogram_recent" );
+			var flotRecent = $J.plot( graphRecent, seriesRecent, recentOptions );
+
+			var recentGraphStartDate = data.results.recent[0].date * 1000;
+
+			var rollupPoints = flotRollup.getData();
+			var seriesPositive = rollupPoints[0];
+			{
+				var startX = seriesPositive.xaxis.p2c( recentGraphStartDate );
+				var endPoint = seriesPositive.data[seriesPositive.data.length-1];
+				var endX = seriesPositive.xaxis.p2c( endPoint[0] + rollupOptions.series.bars.barWidth );
+				var highlightWidth = endX - startX;
+
+				// get min/max of the yaxis
+				var axes = flotRollup.getAxes();
+				var startY = seriesPositive.yaxis.p2c( axes.yaxis.max );
+				var endY = seriesPositive.yaxis.p2c( axes.yaxis.min );
+				var highlightHeight = endY - startY;
+
+				var funcDrawGraphOverlay = function() {
+
+					var c = document.getElementById("review_graph_canvas");
+					var ctx = c.getContext("2d");
+					// resize the canvas to the same size as the element, so our drawing doesn't look blurry
+					c.width = $J(c).width();
+					c.height = $J(c).height();
+					ctx.clearRect(0, 0, c.width, c.height);
+					// these should be 1-to-1 now, but for correctness, we need to
+					var scaleX = c.width / c.offsetWidth;
+					var scaleY = c.height / c.offsetHeight;
+
+					// draw rect on the graph
+					ctx.fillStyle = 'rgba(148,217,255,0.2)';
+					var offsets = flotRollup.getPlotOffset();
+					var offsetLeft = ( offsets.left + startX ) + $J(flotRollup.getCanvas()).offsetParent().position().left;
+					var offsetTop = ( offsets.top + startY ) + $J(flotRollup.getCanvas()).offsetParent().position().top;
+					ctx.fillRect(offsetLeft * scaleX, offsetTop * scaleY, highlightWidth, highlightHeight);
+
+					// now draw the "pop-out" on our other canvas
+					offsetLeft = ( offsets.left + endX ) + $J(flotRollup.getCanvas()).offsetParent().position().left;
+					offsetTop = ( offsets.top + startY ) + $J(flotRollup.getCanvas()).offsetParent().position().top;
+					var offsetBottom = ( offsets.top + endY ) + $J(flotRollup.getCanvas()).offsetParent().position().top;
+					var recentSection = $J("#review_histogram_recent_section");
+
+					ctx.fillStyle = 'rgba(33,44,61,1)';
+					ctx.beginPath();
+					ctx.moveTo(offsetLeft * scaleX, offsetTop * scaleY);
+					ctx.lineTo(recentSection.position().left * scaleX, recentSection.position().top * scaleY);
+					ctx.lineTo(recentSection.position().left * scaleX, ( recentSection.position().top + recentSection.height() ) * scaleY);
+					ctx.lineTo(offsetLeft * scaleX, offsetBottom * scaleY);
+					ctx.lineTo(offsetLeft * scaleX, offsetTop * scaleY);
+					ctx.fill();
+				};
+
+				var funcDrawPastEvents = function() {
+					DrawPastEvents( flotRecent, rgPastEventsRecent );
+				};
+				flotRecent.hooks.draw.push( funcDrawPastEvents );
+				funcDrawPastEvents();
+
+				$J("#review_graph_canvas").resize( funcDrawGraphOverlay );
+				$J("#review_graph_canvas").resize( funcDrawPastEvents );
+				funcDrawGraphOverlay();
+			}
+		}
+
+		// tooltip
+		$J("<div id='review_histogram_tooltip'></div>").appendTo("body");
+		var funcTooltip = function (event, pos, item) {
+			var tooltip = $J("#review_histogram_tooltip");
+			if ( item )
+			{
+				var x = item.datapoint[0].toFixed(2);
+				var y = item.datapoint[1].toFixed(2);
+				var numReviews = parseInt( y );
+				var bNegativeReviews = numReviews < 0;
+				var yDelta = bNegativeReviews ? 10 : ( -20 - tooltip.height() );
+				var xDelta = 5;
+				numReviews = Math.abs( numReviews );
+
+				var date = new Date( parseInt(x) );
+
+				var dateOptions = { day: 'numeric', month: 'long', year: 'numeric', timeZone: "UTC" };
+				var strDate = date.toLocaleDateString( undefined, dateOptions );
+				tooltip.html( v_numberformat( numReviews, 0 ) + " " + item.series.label + " (" + strDate + ")" );
+				tooltip.css( {top: item.pageY+yDelta, left: item.pageX+xDelta} );
+				tooltip.fadeIn( 10 );
+
+				tooltip.toggleClass( "negative", bNegativeReviews );
+			}
+			else
+			{
+				tooltip.hide();
+			}
+		};
+
+		// click
+		var funcClick = function( plot, rollupType ) {
+			return function (event, pos, item) {
+				// ignore for selection
+				if ( plot.getSelection() )
+				{
+					return;
+				}
+
+				if ( item )
+				{
+					var x = item.datapoint[0].toFixed(2);
+					var y = item.datapoint[1].toFixed(2);
+					var numReviews = parseInt( y );
+					var bNegativeReviews = numReviews < 0;
+
+					var date = new Date( parseInt(x) );
+					var startDate = date.getTime() / 1000;
+					var endDate = startDate + 86400;
+					if ( rollupType == 'week' )
+					{
+						endDate = startDate + 86400 * 7;
+					}
+					else if ( rollupType == 'month' )
+					{
+						var lastDayOfMonth = new Date( date.getUTCFullYear(), date.getUTCMonth() + 1, 0 );
+						endDate = lastDayOfMonth.getTime() / 1000;
+					}
+
+					$J( bNegativeReviews ? '#review_type_negative' : '#review_type_positive').attr( 'checked', true );
+					FilterReviewsToGraph( bCountAllReviews, startDate, endDate );
+
+					flotRollup.clearSelection();
+					if ( flotRecent )
+					{
+						flotRecent.clearSelection();
+					}
+				}
+			}
+		};
+
+		var funcSelected = function( plot ) {
+			return function (event, ranges) {
+
+				var startDate = Math.floor( ranges.xaxis.from.toFixed(1) / ( 86400 * 1000 ) ) * 86400;
+				var endDate = Math.ceil( ranges.xaxis.to.toFixed(1) / ( 86400 * 1000 ) ) * 86400;
+
+				$J( '#review_type_all' ).attr( 'checked', true );
+				FilterReviewsToGraph( bCountAllReviews, startDate, endDate );
+				if ( plot == flotRollup && flotRecent )
+				{
+					flotRecent.clearSelection();
+				}
+				else if ( plot == flotRecent )
+				{
+					flotRollup.clearSelection();
+				}
+			};
+		};
+
+		var funcUnSelected = function ( event ) {
+			
+		};
+
+		graphRollup.bind("plothover", funcTooltip);
+		graphRollup.bind("plotclick", funcClick( flotRollup, data.results.rollup_type ) );
+		graphRollup.bind("plotselected", funcSelected( flotRollup ));
+		graphRollup.bind("plotunselected", funcUnSelected );
+		if ( graphRecent )
+		{
+			graphRecent.bind("plothover", funcTooltip);
+			graphRecent.bind("plotclick", funcClick( flotRecent, 'day' ) );
+			graphRecent.bind("plotselected", funcSelected( flotRecent ) );
+			graphRecent.bind("plotunselected", funcUnSelected );
+		}
+
+		var funcViewReviewsDuringEvent = function( bCountAllReviews, startDate, endDate ) {
+			$J( '#review_type_all' ).attr( 'checked', true );
+			$J('#reviews_offtopic_activity_checkbox').attr( 'checked', false );
+			FilterReviewsGraph( bCountAllReviews, startDate, endDate, false );
+			if ( flotRecent )
+			{
+				flotRecent.clearSelection();
+			}
+			flotRollup.clearSelection();
+		};
+
+		var funcViewReviewsExcludingEvent = function( bCountAllReviews, startDate, endDate ) {
+			$J( '#review_type_all' ).attr( 'checked', true );
+			$J('#reviews_offtopic_activity_checkbox').attr( 'checked', false );
+			FilterReviewsGraph( bCountAllReviews, startDate, endDate, true );
+			if ( flotRecent )
+			{
+				flotRecent.clearSelection();
+			}
+			flotRollup.clearSelection();
+		};
+
+		// recent events
+		if ( bExpandGraph )
+		{
+			var container = $J( "#review_recent_events_container" );
+			container.show();
+
+			flotRollup.draw();
+			if ( flotRecent )
+			{
+				flotRecent.draw();
+			}
+		}
+		else
+		{
+			$J( "#review_histograms_container" ).addClass( "collapsed" );
+			$J( "#reviews_filter_options" ).addClass( "graph_collapsed" );
+		}
+
+		$J( ".review_event_graph_icon" ).each( function( index, value ) {
+			var $elem = $J( value );
+			$elem.click( function() {
+				var startDate = $J( this ).data( 'startDate' );
+				var endDate = $J( this ).data( 'endDate' );
+
+				var startDateObj = new Date( startDate * 1000 );
+				var endDateObj = new Date( endDate * 1000 );
+				var dateOptions = { day: 'numeric', month: 'long', year: 'numeric', timeZone: "UTC" };
+				var strDateRange = startDateObj.toLocaleDateString( undefined, dateOptions ) + " - " + endDateObj.toLocaleDateString( undefined, dateOptions );
+
+				var dialogContent = $J( "<div/>", { class: "review_anomalous_events_dialog" } );
+				dialogContent.append( $J( "<div/>", { class: 'review_anomalous_events_icon', html: '*' } ) );
+				dialogContent.append( $J( "<div/>", { class: 'review_anomalous_events_title', html: strDateRange } ) );
+				dialogContent.append( $J( "<div/>", { style: "clear: left" } ) );
+				dialogContent.append( $J( "<div/>", { html: '<p>此时间段被标记为含有一组异常评测，我们相信这些评测与您是否喜欢游戏并无多大关联。此时间段内的评测默认不包含在评测分数中。</p><p>您可以阅读<a href="https://steamcommunity.com/games/593110/announcements/detail/1808664240333155775">我们的博客文章</a>，了解这些时间段如何选定。</p><p>如果您希望进行深入了解，可以阅读此时间段内发表的评测，或编辑您的偏好，将跑题评测时间段纳入评测分数中。</p>' } ) );
+				var dialog = ShowConfirmDialog( '跑题评测活动', dialogContent, '阅读评测', '取消', '编辑偏好' );
+				dialog.done( function( type ) {
+					if ( type == 'OK' )
+					{
+						funcViewReviewsDuringEvent( bCountAllReviews, startDate, endDate );
+					}
+					else if ( type == 'SECONDARY' )
+					{
+						EditUserReviewScorePreference();
+					}
+				} );
+			} );
+		} );
+
+	} );
+}
+
+function SetReviewsGraphVisibility( bVisible )
+{
+	$J( "#review_histograms_container" ).toggleClass( "collapsed", !bVisible );
+	$J( "#reviews_filter_options" ).toggleClass( "graph_collapsed", !bVisible );
+}
+
+function ClearReviewDateFilter()
+{
+	$J('#review_start_date').val( -1 );
+	$J('#review_end_date').val( -1 );
+	$J('#review_date_range_histogram').attr( 'disabled', true );
+	$J('#review_date_range_exclude_histogram').attr( 'disabled', true );
+	$J( "#review_selected_histogram_date_range_text" ).hide();
+	ShowFilteredReviews();
+}
+
+function OnLoadReviews()
+{
+	BuildReviewHistogram();
+	ShowFilteredReviews();
+}
+
+function UpdateActiveFilters()
+{
+	var bAnyActiveFilters = false;
+	// type
+	if ( $J( "#review_type_positive" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_type" ).show();
+		$J( "#reviews_filter_type" ).text( '好评' );
+	}
+	else if ( $J( "#review_type_negative" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_type" ).show();
+		$J( "#reviews_filter_type" ).text( '差评' );
+	}
+	else
+	{
+		$J( "#reviews_filter_type" ).hide();
+	}
+
+	// purchase type
+	if ( $J( "#purchase_type_steam" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_purchase_type" ).show();
+		$J( "#reviews_filter_purchase_type" ).text( 'Steam 购买' );
+	}
+	else if ( $J( "#purchase_type_non_steam" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_purchase_type" ).show();
+		$J( "#reviews_filter_purchase_type" ).text( '非 Steam 购买' );
+	}
+	else
+	{
+		$J( "#reviews_filter_purchase_type" ).hide();
+	}
+
+	// language
+	if ( $J( "#review_language_mine" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_language" ).show();
+		$J( "#reviews_filter_language" ).text( '您的语言' );
+	}
+	else if ( false )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_language" ).show();
+		$J( "#reviews_filter_language" ).text( '简体中文' );
+	}
+	else
+	{
+		$J( "#reviews_filter_language" ).hide();
+	}
+
+	// graph
+	if ( $J( "#review_date_range_histogram" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_graph" ).show();
+		$J( "#review_selected_histogram_date_range_prefix" ).text( '只查看 ' );
+	}
+	else if ( $J( "#review_date_range_exclude_histogram" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_graph" ).show();
+		$J( "#review_selected_histogram_date_range_prefix" ).text( '排除 ' );
+	}
+	else
+	{
+		$J( "#reviews_filter_graph" ).hide();
+	}
+	
+	// off-topic review activity
+	if ( $J( "#user_reviews_offtopic_activity_menu" ).is( ":visible" ) && $J( "#reviews_offtopic_activity_checkbox" ).attr( "checked" ) )
+	{
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_offtopic_activity" ).show();
+	}
+	else
+	{
+		$J( "#reviews_filter_offtopic_activity" ).hide();
+	}
+
+	var playtimeFilterMin = $J( "#app_reviews_playtime_range_min" ).val();
+	var playtimeFilterMax = $J( "#app_reviews_playtime_range_max" ).val();
+
+	if ( playtimeFilterMin != 0 || playtimeFilterMax != 0 )
+	{
+		var elemPlaytimeDesc = $J( "#review_playtime_preset_text" );
+		if ( playtimeFilterMax == 0 )
+		{
+			if ( playtimeFilterMin == 1 )
+			{
+				elemPlaytimeDesc.text( '超过 1 小时' );
+			}
+			else
+			{
+				elemPlaytimeDesc.text( '超过 %2$s 小时'.replace( "%2$s", playtimeFilterMin ) );
+			}
+		}
+		else
+		{
+			elemPlaytimeDesc.text( '%1$s 小时至 %2$s 小时'.replace( "%1$s", playtimeFilterMin ).replace( "%2$s", playtimeFilterMax ) );
+		}
+
+		bAnyActiveFilters = true;
+		$J( "#reviews_filter_playtime" ).show();
+	}
+	else
+	{
+		$J( "#reviews_filter_playtime" ).hide();
+	}
+
+	$J( "#reviews_filter_title" ).toggle( bAnyActiveFilters );
+}
+
+function ShowFilteredReviews()
+{
+	UpdateActiveFilters();
+
+	if ( $J( "#review_appid" ).length == 0 )
+		return;
+
+	var appid = $J( "#review_appid" ).val();
+	var context = $J( "#review_context" ).val();
+	var defaultDayRange = $J( "#review_default_day_range" ).val();
+	var startDate = $J( "#review_start_date" ).val();
+	var endDate = $J( "#review_end_date" ).val();
+	SelectReviews( appid, context, defaultDayRange, startDate, endDate, true );
+}
+
+function ChangeReviewPurchaseTypeFilter()
+{
+	var purchaseType = $J('input[name="purchase_type"]:checked').val();
+	V_SetCookie( "review_purchase_type_filter", purchaseType, purchaseType == 'all' ? 1 : 14, "app/" );
+	ShowFilteredReviews();
+}
+
+function OnReviewPlaytimeFilterSliderChanged( hourMin, hourMax, maxHours )
+{
+	if ( hourMin == 0 && hourMax == maxHours )
+	{
+		$J('input[name="review_playtime_preset"][value="0"]').attr( 'checked', true );
+	}
+	else
+	{
+		$J('input[name="review_playtime_preset"]').attr( 'checked', false );
+	}
+
+	ShowFilteredReviews();
+}
+
+function SelectPlaytimeFilterPreset( playtimeMinHours )
+{
+	var maxHours = 100;
+	var maxSeconds = maxHours * 60 * 60;
+
+	$J("#app_reviews_playtime_slider").slider('values', 0, playtimeMinHours * 60 * 60 );
+	$J("#app_reviews_playtime_slider").slider('values', 1, maxSeconds );
+
+	UpdatePlaytimeFilterValues( playtimeMinHours, maxHours );
+
+	ShowFilteredReviews();
+}
+
+function ChangedOfftopicReviewActivityFilter()
+{
+	ShowFilteredReviews();
+}
+
+function ClearOfftopicReviewActivityFilter()
+{
+	$J('#reviews_offtopic_activity_checkbox').attr( 'checked', false );
+	ShowFilteredReviews();
+}
+
+function ClearReviewPlaytimeFilter()
+{
+	$J('#review_playtime_preset_0').attr( 'checked', true );
+	SelectPlaytimeFilterPreset( 0 );
+}
+
+function CollapseLongReviews()
+{
+	$J('.review_box').each( function(j, i){
+		if( $J(i).outerHeight() > 400 )
+		{
+			if ( !$J(i).hasClass('expanded') )
+			{
+				$J(i).addClass('partial')
+			}
+		}
+	});
+}
+
+function UpdatePlaytimeFilterValues( hourMin, hourMax )
+{
+	var maxHours = 100;
+	$J( "#app_reviews_playtime_range_min" ).val( hourMin );
+	$J( "#app_reviews_playtime_range_max" ).val( hourMax == maxHours ? 0 : hourMax );
+
+	var strHoursMinNumber = v_numberformat( hourMin, 0 );
+	var strHourMin = hourMin > 0 ? '%1$s 小时'.replace( /%1\$s/g, strHoursMinNumber ) : '无最低限制';
+	$J( "#app_reviews_playtime_range_text_min" ).text( strHourMin );
+
+	var strHoursMaxNumber = v_numberformat( hourMax, 0 );
+	var strHourMax = hourMax > 0 && hourMax != maxHours ? '%1$s 小时'.replace( /%1\$s/g, strHoursMaxNumber ) : '无最高限制';
+	$J( "#app_reviews_playtime_range_text_max" ).text( strHourMax );
+}
+
+function InitPlaytimeFilterSlider()
+{
+	var maxHours = 100;
+	var maxSeconds = maxHours * 60 * 60;
+	$J( "#app_reviews_playtime_slider" ).slider({
+		range: true,
+		min: 0,
+		max: maxSeconds,
+		values: [0, maxSeconds],
+		step: 3600,
+		slide: function (event, ui) {
+			var minSecs = ui.values[0];
+			var maxSecs = ui.values[1];
+
+			var hourMin = parseInt( minSecs / ( 60 * 60 ), 10 );
+			var hourMax = parseInt( maxSecs / ( 60 * 60 ), 10 );
+
+			UpdatePlaytimeFilterValues( hourMin, hourMax );
+		},
+		change: function( event, ui ) {
+			if ( event.originalEvent )
+			{
+				var minSecs = ui.values[0];
+				var maxSecs = ui.values[1];
+
+				var hourMin = parseInt( minSecs / ( 60 * 60 ), 10 );
+				var hourMax = parseInt( maxSecs / ( 60 * 60 ), 10 );
+
+				OnReviewPlaytimeFilterSliderChanged( hourMin, hourMax, maxHours );
+			}
+		}
+	});
+}
+
+//formerly app_reporting.js
+
+var gReportedApp = false;
+function ShowReportDialog( nAppId )
+{
+	if ( gReportedApp )
+	{
+		return;
+	}
+
+	var content = $J('<div/>', {'class': 'app_report_dialog' } );
+
+	content.append( $J('<div/>', {'class': 'app_report_dialog_intro' } ).text('请选择一个您举报该产品的原因。') );
+
+		var rgReportOptions = {"1":"\u6b3a\u8bc8 - <span class=\"sub\">\u8be5\u8f6f\u4ef6\u901a\u8fc7\u6b3a\u8bc8\u7684\u65b9\u5f0f\u5c1d\u8bd5\u6536\u96c6\u654f\u611f\u4fe1\u606f\uff0c\u4f8b\u5982\u60a8\u7684 Steam \u51ed\u8bc1\u6216\u8d22\u52a1\u6570\u636e\uff08\u4fe1\u7528\u5361\u4fe1\u606f\u7b49\uff09\u3002<\/span>","2":"\u6709\u5bb3 - <span class=\"sub\">\u8be5\u8f6f\u4ef6\u610f\u5916\u6216\u6709\u5bb3\u5730\u4fee\u6539\u5ba2\u6237\u7684\u8ba1\u7b97\u673a\uff08\u4f8b\u5982\u8be5\u8f6f\u4ef6\u662f\u6076\u610f\u8f6f\u4ef6\u6216\u75c5\u6bd2\uff09<\/span>","5":"\u6210\u4eba\u5185\u5bb9 - <span class=\"sub\">\u5305\u542b\u672a\u6b63\u786e\u6807\u8bc6\u5e76\u8fdb\u884c\u5e74\u9f84\u9650\u5236\u7684\u6210\u4eba\u5185\u5bb9<\/span>","6":"\u8bfd\u8c24 - <span class=\"sub\">\u5305\u542b\u8bfd\u8c24\u6027\u8d28\u7684\u9648\u8ff0<\/span>","8":"\u5265\u524a\u513f\u7ae5 - <span class=\"sub\">\u5305\u542b\u4efb\u4f55\u5f62\u5f0f\u7684\u5265\u524a\u513f\u7ae5\u7684\u5185\u5bb9<\/span>","11":"\u8fdd\u53cd\u6cd5\u5f8b - <span class=\"sub\">\u5305\u542b\u8fdd\u53cd\u60a8\u6240\u5728\u5730\u533a\u6cd5\u5f8b\u7684\u5185\u5bb9<\/span>","13":"\u635f\u574f - <span class=\"sub\">\u65e0\u6cd5\u6b63\u5e38\u4e0b\u8f7d\u3001\u5b89\u88c5\u6216\u8005\u8fd0\u884c\uff0c\u5373\u4f7f\u6240\u4f7f\u7528\u7684\u673a\u5668\u6ee1\u8db3\u6700\u4f4e\u7cfb\u7edf\u9700\u6c42\u3002<\/span>"};
+	var rgReportOptionElements = [];
+	for ( var eReportType in rgReportOptions )
+	{
+		var $ReportOption = $J('<div/>', {'class': 'app_report_dialog_option' } );
+		$ReportOption.append( $J('<div/>', {'class': 'app_report_dialog_option_input' }).append( $J('<input/>', {'type': 'radio', 'name':'report_type', 'value': eReportType, 'id': 'report_type_' + eReportType } ) ) );
+		$ReportOption.append( $J('<div/>', {'class': 'app_report_dialog_option_text' }).append( $J('<label/>', {'for': 'report_type_' + eReportType }).html( rgReportOptions[eReportType] ) ) );
+		rgReportOptionElements.push( $ReportOption );
+	}
+
+	for ( var j, x, i = rgReportOptionElements.length; i; j = parseInt(Math.random() * i), x = rgReportOptionElements[--i], rgReportOptionElements[i] = rgReportOptionElements[j], rgReportOptionElements[j] = x );
+	for ( var i = 0; i < rgReportOptionElements.length; ++i )
+	{
+		content.append( rgReportOptionElements[i] );
+	}
+
+	var textArea = $J('<textarea/>', { 'class': 'app_report_dialog_reason grey_bevel fullwidth', 'id' : 'ReportReason',  'name' : 'report_reason' } );
+	var maxReasonLength = 512;
+	textArea.attr( 'maxlength', maxReasonLength );
+	textArea.bind( "keyup change",
+		function()
+		{
+			var str = $J(this).val()
+			var mx = parseInt($J(this).attr('maxlength'))
+			if (str.length > mx)
+			{
+				$J(this).val(str.substr(0, mx))
+				return false;
+			}
+		}
+	);
+	content.append( $J('<div/>', {'class': 'app_report_dialog_intro' } ).text('您可以在此处输入您认为相关的额外信息：') );
+	content.append( textArea );
+
+	content.append( $J('<div/>', {'class': 'app_report_dialog_dmca' } ).html('如果您想举报版权侵权问题，并且是版权所有者，请在<a href="https://steamcommunity.com/dmca/create/">这里</a>查看我们的 DMCA 侵犯版权符合性声明。') );
+	content.append( $J('<div/>', {'class': 'app_report_dialog_dmca' } ).html('如果您想提交商标投诉，请在<a href="https://steamcommunity.com/trademark/createtrademarkcomplaint/">此处</a>填写表格。') );
+
+	var dialog = ShowConfirmDialog( '举报该产品', content, '举报');
+
+	dialog.done( function() {
+		var eReportTypeSelected = content.find( 'input[type=radio]:checked' ).val();
+		if ( eReportTypeSelected )
+		{
+			$J.post(
+				'https://store.steampowered.com/appreport/' + nAppId + '/report/',
+				{
+					'report_type' : eReportTypeSelected,
+					'report_reason' : content.find( 'textarea' ).val(),
+					'sessionid': g_sessionID
+				}
+			).done( function( json ) {
+					gReportedApp = true;
+					$J( "#ReportAppBtn").addClass( 'btn_active' );
+				}
+			).fail( function( jqXHR ) {
+					var json = jqXHR.responseText.evalJSON();
+					if ( json.success == 29 )
+					{
+						ShowAlertDialog( '错误', '您已经举报了该产品！' );
+						gReportedApp = true;
+						$J( "#ReportAppBtn").addClass( 'btn_active' );
+					}
+					else
+					{
+						ShowAlertDialog( '错误', '在保存您的报告时出现问题。请稍后再试。' );
+					}
+
+				} );
+		}
+		else
+		{
+			ShowAlertDialog( '错误', '您必须选择一个您举报该产品的原因！' );
+		}
+	});
+}
+
+function ShowGotSteamModal( strSteamURL, strAppName, strPlayLaunchVerb )
+{
+		var $ModalContent = $J("<div class=\"gotsteamModal\">\r\n\t<div class=\"got_steam_ctn\">\r\n\t<div class=\"got_steam_box\">\r\n\t\t<h1>\u6ca1\u6709 Steam\uff1f<\/h1>\r\n\t\t<p>\u60a8\u9700\u8981\u5148\u5b89\u88c5 <a href=\"https:\/\/store.steampowered.com\/about\/\">Steam \u684c\u9762\u5e94\u7528\u7a0b\u5e8f<\/a>\u624d\u80fd\u5b89\u88c5\u5e76\u8fd0\u884c <strong class=\"gotSteam_AppName\"><\/strong>\u3002\u60a8\u662f\u5426\u5df2\u5728\u672c\u8ba1\u7b97\u673a\u4e0a\u5b89\u88c5 Steam\uff1f<\/p>\r\n\t\t<div class=\"gotsteam_buttons\">\r\n\t\t\t<a class=\"gotSteam_SteamURL btn_blue leftbtn\" href=\"\">\r\n\t\t\t\t<h3>\u662f\u7684\uff0c\u6211\u5df2\u5b89\u88c5 Steam<\/h3>\r\n\t\t\t\t<h5 class=\"gotsteam_action\"><\/h5>\r\n\t\t\t<\/a>\r\n\t\t\t<a href=\"https:\/\/store.steampowered.com\/about\/\" class=\"btn_blue\">\r\n\t\t\t\t<h3>\u6ca1\u6709\uff0c\u6211\u8fd8\u6ca1\u5b89\u88c5 Steam<\/h3>\r\n\t\t\t\t<h5>\u4e86\u89e3\u5e76\u4e0b\u8f7d Steam<\/h5>\r\n\t\t\t<\/a>\r\n\t\t\t<div style=\"clear: left;\"><\/div>\r\n\t\t<\/div>\r\n\t\t<div class=\"got_steam_low_block\">\r\n\t\t\t<div class=\"gotsteam_steam_ico\"><img src=\"https:\/\/store.akamai.steamstatic.com\/public\/images\/v6\/steam_ico.png\" width=\"40\" height=\"40\" border=\"0\" \/><\/div>\r\n\t\t\tSteam \u662f\u9876\u7ea7\u7684\u684c\u9762\u6e38\u620f\u5e73\u53f0\u3002\u52a0\u5165\u514d\u8d39\uff0c\u4f7f\u7528\u65b9\u4fbf\u3002 <a href=\"https:\/\/store.steampowered.com\/about\/\">\u4e86\u89e3\u66f4\u591a Steam \u7684\u76f8\u5173\u4fe1\u606f<\/a>\r\n\t\t<\/div><\/div>\r\n\t<\/div>\r\n<\/div>");
+	$ModalContent.find('.gotSteam_AppName').text( strAppName );
+	$ModalContent.find('.gotsteam_action').text( strPlayLaunchVerb );
+	$ModalContent.find( '.gotSteam_SteamURL').attr( 'href', strSteamURL );
+	var Modal = new CModal( $ModalContent );
+	Modal.Show();
+	//ShowDialog( 'Got Steam?', $ModalContent );
+}
+
+function ChangeSeason( el, season )
+{
+	// switch active season indicator
+	$J( '.series_seasons .season_selector .season_name' ).removeClass( 'active' );
+	$J( el ).addClass( 'active' );
+	
+	// switch which episodes are shown
+	$J( '.season_episode_list_wrapper .season_episode_list' ).removeClass( 'active' );
+	$J( '.season_episode_list_wrapper .season_episode_list[data-season="' + season + '"]' ).addClass( 'active' );
+
+	// load the images
+	$J( '.season_episode_list.active .episode_image_col img').each( function( index, value )
+	{
+		$J( this ).attr( 'src', $J( this ).data( 'src' ) );
+	});
+}
+
+function ShowRecommendedMoreInfoModal()
+{
+	var strTemplate = "<div class=\"recommended_more_info_modal\">\r\n\t\t\t\t\t\t\t\t<p class=\"intro\">\u60a8\u53d1\u73b0\u4e86\u4e00\u4e9b\u5185\u5bb9\uff0c\u5b83\u770b\u4e0a\u53bb\u4e0d\u50cf\u60a8\u4e4b\u524d\u73a9\u8fc7\u7684\u5176\u4ed6\u6e38\u620f\u3002Steam \u4f1a\u901a\u8fc7\u60a8\u73a9\u8fc7\u7684\u6e38\u620f\u3001\u770b\u8fc7\u7684\u5f71\u7247\u548c\u60a8\u5728 Steam \u4e0a\u4f7f\u7528\u7684\u8f6f\u4ef6\u6765\u4e86\u89e3\u60a8\u7684\u504f\u597d\u3002\u6211\u4eec\u4f1a\u5229\u7528\u8fd9\u4e9b\u6d3b\u52a8\u4e3a\u60a8\u91cf\u8eab\u5b9a\u5236\u63a8\u8350\u5185\u5bb9\u3002<\/p>\r\n\t\t\t\t\t\t\t\t<h2>\u559c\u6b22\u8fd9\u9879\u5546\u54c1\uff1f<\/h2>\r\n\t\t\t\t\t\t\t\t<p>\u5982\u679c\u60a8\u559c\u6b22\u8fd9\u9879\u4ea7\u54c1\uff0c\u4e5f\u5b9e\u9645\u8d2d\u5165\u548c\u4f7f\u7528\uff0c\u6211\u4eec\u4fbf\u4f1a\u5c06\u6b64\u7eb3\u5165\u672a\u6765\u63a8\u8350\u65f6\u7684\u53c2\u8003\u3002<\/p>\r\n\t\t\t\t\t\t\t\t<h2>\u5bf9\u8fd9\u7c7b\u4ea7\u54c1\u6ca1\u5174\u8da3\uff1f<\/h2>\r\n\t\t\t\t\t\t\t\t<p>\u60a8\u4e5f\u53ef\u4ee5\u914d\u7f6e\u60a8\u7684\u5546\u5e97\u504f\u597d\u4ee5\u544a\u8bc9 Steam \u5173\u4e8e\u60a8\u4e0d\u611f\u5174\u8da3\u7684\u4ea7\u54c1\u7684\u6807\u7b7e\u6216\u7c7b\u578b\u3002<a href=\"https:\/\/store.steampowered.com\/account\/preferences\/\">\u8bbf\u95ee\u5546\u5e97\u504f\u597d<\/a>\u3002<\/p>\r\n\t\t\t\t\t\t\t<\/div>";
+	ShowAlertDialog( "\u6709\u5173\u63a8\u8350\u7684\u66f4\u591a\u4fe1\u606f", strTemplate);
+
+}
+
+function CollapseLongStrings( strSelector )
+{
+
+	$J(strSelector).each(function(i, j){
+		var $target = $J(j);
+		if( j.scrollWidth >  $target.innerWidth() )
+		{
+			//$target.css({ 'overflow': 'hidden', 'white-space': 'nowrap', 'text-overflow': 'ellipsis' });
+			var elMoreBtn = document.createElement('div');
+
+			elMoreBtn.classList.add('more_btn');
+			elMoreBtn.textContent = '+';
+			elMoreBtn.addEventListener('click', function($target, elButton, event){
+
+				$target.css({'overflow': 'visible', 'white-space': 'normal'});
+				elButton.remove();
+
+			}.bind(null, $target, elMoreBtn ));
+
+			j.parentNode.appendChild(elMoreBtn);
+		}
+	})
+}
+
+function JSReportProductAction( appId, pageAction, snr )
+{
+	$J.post( 'https://store.steampowered.com//ajaxreportproductaction/' + appId + '/', {
+			'page_action' : pageAction,
+			'snr' : snr
+		}
+	);
+}
+
+function ToggleBannerContentVisibility( divContentID, divIconID )
+{
+	var $element = $J( divContentID );
+	if ( $element !== null )
+	{
+		$element.is(':visible') ? $element.hide('fast') : $element.show('fast');
+	}
+
+	var $icon = $J( divIconID )
+	if ( $icon !== null )
+	{
+		$icon.toggleClass('expanded');
+	}
+};
+
+// The review detail section is simplified for mobile screens
+// which requires some section moves here, and formatting changes in .css 
+function ReparentReviewsForSmallScreens()
+{
+	var bUseTabletScreenMode = window.UseTabletScreenMode && window.UseTabletScreenMode(); 
+	var fn_reparent = bUseTabletScreenMode ? Responsive_ReparentItemsInTabletMode : Responsive_ReparentItemsInMobileMode;
+
+	var $MoveReviewSections = $J('.user_reviews_container');
+	$MoveReviewSections.each( function() {
+
+		// move content within each review detail section for small screen layout
+		var $SummarySection = $J(this).find('[id^="ReviewContent"]');
+		$SummarySection.each( function() {
+
+			var $LeftColContent = $J(this).find('.leftcol');
+			var $NewLeftLocation = $J(this).find('.responsive_review_leftcol_ctn');
+			var $ReviewAwardCtn = $J(this).find('.review_award_ctn');
+			var $NewAwardLocation = $J(this).find('.rightcol');
+
+			// if we don't have the required destination containers bail (this shouldn't happen)
+			if ( $NewLeftLocation.length == 0 || $NewAwardLocation.length == 0 )
+				return;
+
+			fn_reparent( '#' + $LeftColContent.attr('id'), $J( '#' + $NewLeftLocation.attr('id') ) );
+			fn_reparent( '#' + $ReviewAwardCtn.attr('id'), $J( '#' + $NewAwardLocation.attr('id') ) );
+		} );
+	} );
+}
+
+// Share dialog calls this to copy the store page link to the clipboard
+function ShareDialogCopyToClipboard()
+{
+	// select the text and copy to clipboard
+	var $res = false;
+	var $linkText = document.getElementById('shareDialogLinkStoreLink');
+	if ( $linkText )
+	{
+		// using .select() instead causes the copy command to fail on iOS 12
+		$linkText.setSelectionRange(0, $linkText.value.length);
+		$res = document.execCommand( "copy" );
+	}
+
+	// report the result
+	$J('#shareDialogResult').text( $res ? '已复制链接' : '复制商店链接到剪贴板失败');
+
+	// clear the selection
+	document.getSelection().removeAllRanges();
+}
+
+// A very basic scroll helper which only supports vertical scrolling
+// Added to translate gamepad navigation events into scroll up/down
+function ScrollElement( elementID, nAmount )
+{
+	var element = $J( elementID )[0];
+	if ( !element )
+		return false;
+
+	if ( nAmount > 0 && element.scrollTop + element.clientHeight < element.scrollHeight )
+		element.scrollBy( 0, nAmount );
+	else if ( nAmount < 0 && element.scrollTop > 0 )
+		element.scrollBy( 0, nAmount );
+	else 
+		return false;
+
+	return true;
+}
+
+// initially only used by tablet
+function ShowEarlyAccessModal( contentID )
+{
+	var $Content = $J( contentID );
+	$Content.detach();
+	$Content.show();
+
+	ShowDialog( "\u62a2\u5148\u4f53\u9a8c\u8f6f\u4ef6", $Content ).always(
+		function() {
+
+			// save it away again for later
+			$Content.hide();
+			$J( document.body ).append( $Content );
+		}
+	);
+}
+
+// applies layout changes for mobile and tablet screen sizes
+function ReparentAppLandingPageForSmallScreens()
+{
+	// copy the review summary content to the review details section
+	// CSS will set when to make these visible
+	var $appReviewsAll = $J('#appReviewsAll_responsive').clone();
+	$appReviewsAll.attr( 'id', 'appReviewsAll_Detail' );
+	$appReviewsAll.css( 'display', 'none' );
+	$appReviewsAll.appendTo('.reviews_info_ctn');
+	var $appReviewsRecent = $J('#appReviewsRecent_responsive').clone();
+	$appReviewsRecent.attr( 'id', 'appReviewsRecent_Detail' );
+	$appReviewsRecent.css( 'display', 'none' );
+	$appReviewsRecent.appendTo('.reviews_info_ctn');
+
+	// on iOS use the iOS share icon.  the default is Android.
+	if ( navigator.userAgent.toLowerCase().indexOf( 'iphone' ) != -1 )
+	{
+		$J('#shareImg').attr('src', 'https://store.akamai.steamstatic.com/public/shared/images/icon_share_ios.svg' );
+	}
+
+	var bUseTabletScreenMode = window.UseTabletScreenMode && window.UseTabletScreenMode();
+
+	ReparentPurchaseOptionsForTablet( '#purchaseOptionsContent' );
+
+		var fn_reparent = bUseTabletScreenMode ? Responsive_ReparentItemsInTabletMode : Responsive_ReparentItemsInMobileMode;
+
+	// move early access content into the purchase options parent
+	if ( bUseTabletScreenMode )
+	{
+		// on tablet we provide a learn more link which opens a dialog containing early access details
+		fn_reparent( $J('#earlyAccessBody'), $J('#earlyAccessTabletDialogContent') );
+		fn_reparent( $J('#earlyAccessTabletContent'), $J('#purchaseOptionsContent') );
+	}
+	else
+	{
+		fn_reparent( '.early_access_header', $J('#purchaseOptionsContent') );
+	}
+
+	// move purchase options into a new container for responsive UX
+	fn_reparent( '#game_area_purchase', $J('#purchaseOptionsContent') );
+
+	// order the action buttons
+	fn_reparent( '#shareBtn', $J('#rowBtnActions') );
+	fn_reparent( '#reportBtn', $J('#rowBtnActions') );
+	fn_reparent( '#queueBtnFollow', $J('#rowBtnActions') );
+	fn_reparent( '#ignoreBtn', $J('#rowBtnActions') );
+	fn_reparent( '#rowBtnActions', $J('#queueActionsCtn') );
+			
+	// place discovery queue below the action buttons
+	fn_reparent( '#nextInDiscoveryQueue', $J('#queueCtn') );
+
+	// place banners and game details into the links and info section
+	fn_reparent( '#bannerAchievements', $J( '#appLinksAndInfo' ) );
+	fn_reparent( '#bannerPointsShop', $J( '#appLinksAndInfo' ) );
+	fn_reparent( '#bannerItemStore', $J( '#appLinksAndInfo' ) );
+	fn_reparent( '#bannerCommunity', $J( '#appLinksAndInfo' ) );
+
+	// on tablet these go into a dropdown
+	fn_reparent( '#appDetailsUnderlinedLinks', bUseTabletScreenMode ? $J( '#appLinksAndInfo_TabletDropdownContent' ) : $J( '#appLinksAndInfo' ) );
+
+	// place the active review filter list in the review details section
+	fn_reparent( '#reviews_active_filters', $J('.reviews_info_ctn') );
+
+	// populate the reviews settings popup
+	fn_reparent( '#review_histograms_container', $J( '#reviewSettingsPopupContent' ) );
+	fn_reparent( '#reviews_filter_options', $J( '#reviewSettingsPopupContent' ) );
+
+	// move some of the links and info content to the bottom 
+	// testing this - we may need to move this again  
+	fn_reparent( '#genresAndManufacturer', $J( '#appLinksAndInfo' ) );
+
+	// the window resize message handler is for layout adjustements that require more logic than reparenting based on screen size
+	var defaultShareFlex = $J('#shareBtn').css('flex-grow');
+	var defaultFollowFlex = $J('#queueBtnFollow').css('flex-grow');
+	var defaultReportFlex = $J('#reportBtn').css('flex-grow');
+	var defaultLanguageTableDisplay = $J('#languageTable').css('display');
+
+	var msgWatch = bUseTabletScreenMode ? 'Responsive_TabletScreenModeToggled' : 'Responsive_MobileScreenModeToggled';
+	$J(window).on( msgWatch, function() {
+
+		var bUseNewUX = ( bUseTabletScreenMode || ( window.UseMobileScreenMode && window.UseMobileScreenMode() ) );
+
+		// if one of the wishlist buttons are visible make the action buttons flex grow so the two rows of buttons match width.
+		if ( bUseNewUX && ( $J('#add_to_wishlist_area').is(':visible') 
+			|| $J('#add_to_wishlist_area_success').is(':visible') 
+			|| $J('#add_to_wishlist_area_fail').is(':visible') ) )
+		{
+			$J('#shareBtn').css('flex-grow', '1');
+			$J('#queueBtnFollow').css('flex-grow', '1');
+			$J('#reportBtn').css('flex-grow', '1'); 
+		}
+		else
+		{
+			$J('#shareBtn').css('flex-grow', defaultShareFlex);
+			$J('#queueBtnFollow').css('flex-grow', defaultFollowFlex);
+			$J('#reportBtn').css('flex-grow', defaultReportFlex);
+		}
+
+		// if we're in a small screen layout reveal all language options within the languageTable
+		// don't bother trying to re-hide these if the user later resizes outside small screen
+		if ( bUseNewUX )
+		{
+			var $LanguageOptions = $J('#languageTable').find('tr');
+			$LanguageOptions.each( function() {
+				$J(this).css('display','');
+			} );
+
+			// hide the 'see all X languages" link since all languages are now visible
+			$J('#languageTable').find('.all_languages').css('display', 'none');
+		}
+
+		// hide the language table on small screens since a banner is clicked to reveal it
+		// 
+		// putting a display:none in CSS for small screen sizes doesn't work well because the 
+		// CSS values don't override the display state set by the language banner click handler 
+		$J('#languageTable').css('display', bUseNewUX ? 'none' : defaultLanguageTableDisplay );
+	});
+	$J(window).trigger( msgWatch );
+
+	// the vertical space available to display purchase options can change when the page scrolls.  Check if we need to update the height.
+	if ( bUseTabletScreenMode )
+		$J(window).on( 'scroll', UpdateTabletPurchaseOptionsHeight );
+}
+
+// Update the height of the sticky, scrollable purchase options container.
+function UpdateTabletPurchaseOptionsHeight()
+{
+	if ( window.UseTabletScreenMode && window.UseTabletScreenMode() )
+	{
+		let $purchaseContentHeight = parseInt( window.innerHeight ) - parseInt( GetResponsiveHeaderFixedOffsetAdjustment() ) - parseInt( $J('#purchaseOptionsContentTablet')[0].getBoundingClientRect().top );
+		$purchaseContentHeight += 'px';
+		let $stickyDiv = $J('#purchaseOptionsContentTablet');
+		if ( $stickyDiv && $stickyDiv.css( 'height') != $purchaseContentHeight )
+		{
+			$stickyDiv.css( 'height', $purchaseContentHeight );
+		}
+	}
+}
+
+function ReparentPurchaseOptionsForTablet( idPurchaseOptions )
+{
+	// tablet mode has its own purchase options container (shown on right side of screen)
+	if ( window.UseTabletScreenMode && window.UseTabletScreenMode() )
+	{
+		Responsive_ReparentItemsInTabletMode( idPurchaseOptions, $J('#purchaseOptionsContentTablet') );
+
+		$J('#purchaseOptionsContentTablet').css('top', parseInt( GetResponsiveHeaderFixedOffsetAdjustment() ) + 'px' );
+		$J('#purchaseOptionsContentTablet').css('scrollTop', 0);
+		UpdateTabletPurchaseOptionsHeight();
+	}
+}
+
+
+// Popup for customers to optin/out of the new mobile UX 
+var g_newMobileUXPopup = null;
+function ShowUseNewMobileUXPopup()
+{
+	var $ModalContent = $J('#popupNewMobileUX');
+	if ( 0 == $ModalContent.length )
+		return;
+
+	g_newMobileUXPopup = new CModal( $ModalContent );
+	g_newMobileUXPopup.Show();
+}
+
+// check if customer selection for viewing the new mobile UX has changed
+function OnNewMobileUXPopupClosed()
+{
+	if ( typeof g_newMobileUXPopup !== 'undefined' )
+		g_newMobileUXPopup.Dismiss();
+}
+
+// called by Mobile UX to show a settings dialog with Review filters
+var g_reviewSettingsPopup = null;
+function ShowReviewSettingsModal()
+{
+	// bail if we can't find the popup content, or it's not populated
+	var $ModalContent = $J('#reviewSettingsPopupCtn');
+	if ( 0 == $ModalContent.length || 0 == $ModalContent.find('#reviews_filter_options').length )
+	{
+		return;
+	}
+
+	g_reviewSettingsPopup = new CModal( $ModalContent );
+	g_reviewSettingsPopup.Show();
+}
+function CloseReviewSettingsModal()
+{
+	if ( typeof g_reviewSettingsPopup !== 'undefined' )
+		g_reviewSettingsPopup.Dismiss();
+}
+
+function BindFocusVideoOnTablet()
+{
+    $J( '.highlight_movie' ).on( "focusout", function( event ) {
+		this.pause();
+    } );
+}
+
+/* Shows a full screen version of the media carousel using a clone of the existing carousel's content */
+var modalMediaCarousel = null;
+const k_id_modal_media = '_lg';
+
+function GamepadShowModalMediaCarousel( elementID )
+{
+	// If carousel is up, dismiss it
+	if ( modalMediaCarousel && modalMediaCarousel.BIsActiveModal() )
+	{
+		modalMediaCarousel.Dismiss();
+
+		// Set focus in the small carousel to match position in the large carousel
+		document.getElementById( elementID ).focus();
+		return;
+	}
+
+	// Fill the modal carousel with content if it's empty
+	var $ModalCarouselContents = $J( '#modalMediaCarouselContents' );
+	if ( 0 == $ModalCarouselContents.length )
+	{
+		// clone the media carousel
+		$ModalCarouselContents = $J( '#carouselContainer' ).clone();
+
+		// set unique id's
+		$ModalCarouselContents.attr( 'id', 'modalMediaCarouselContents' );
+		$ModalCarouselContents.find( '#carouselItems' ).attr( 'id', 'modalMediaCarouselItems' );
+		$ModalCarouselContents.find( 'img,video' ).each( function(){
+			this.id += k_id_modal_media;
+		});
+
+		// remove any other divs such as the existing focusing ring
+		$ModalCarouselContents.find( '#modalMediaCarouselItems' ).find( 'div' ).each( function(){
+			this.remove();
+		});
+
+		// add the cloned content to the DOM
+		$ModalCarouselContents.appendTo( '#modalMediaCarousel' );
+	}
+
+	var $Content= $J( '#modalMediaCarousel' );
+	$Content.detach();
+	$Content.css( 'display', 'flex' );
+
+	// set focus on the selected image after the dialog is shown
+	window.setTimeout( function () {
+		if ( typeof GPNavFocusChild !== 'undefined' )
+			GPNavFocusChild( $J( '#' + elementID + k_id_modal_media ) );
+	}, 10 );
+
+	modalMediaCarousel = GPShowFullScreenModal( $Content ).always(
+		function() {
+			// save it away again for later
+			$Content.hide();
+			$J( document.body ).append( $Content );
+		}
+	);
+}
+
+// returns the ID for the element in the modal carousel if that is up, otherwise no change
+function GamepadVideoGetID( videoID )
+{
+	if ( modalMediaCarousel && modalMediaCarousel.BIsActiveModal() )
+		return videoID + k_id_modal_media;
+
+	return videoID;
+}
+
+// enable seeking via dpad
+function GamepadVideoOnDirection( event /* GamepadEvent */, videoID )
+{
+	// focus should be on a video element
+	var video = $J( '#' + GamepadVideoGetID( videoID ) )[0];
+
+	// only handle the navigation if we're in fullscreen
+	if ( video && ( document.webkitFullscreenElement || document.fullscreenElement || document.mozFullScreenElement || document.msFullscreenElement ) )
+	{
+		/* TODO: figure out how to display media volume 
+		   We considered adding this but it's an odd user experience without a visual indicator of media volume
+
+			const fVolumeStep = 0.05;
+			if ( event.detail.button == 9 ) // up
+				video.volume = Math.min( video.volume + fVolumeStep, 1.0 ).toFixed( 2 );
+			else if ( event.detail.button == 10 ) // down
+				video.volume = Math.max( video.volume - fVolumeStep, 0 ).toFixed( 2 );
+		*/
+
+		const nPositionStep = 10;
+		if ( event.detail.button == 11 && video.currentTime > 0 ) // left
+			video.currentTime = Math.max( video.currentTime - nPositionStep, 0 );
+		else if ( event.detail.button == 12 && video.currentTime < video.duration ) // right
+			video.currentTime = Math.min( video.currentTime + nPositionStep, video.duration );
+
+		return true; // return true for moveup, movedown to prevent dpad navigation out of the video  
+	}
+
+	return false; // allow event to propogate
+}
+
+function GamepadVideoOnCancel( videoID )
+{
+	// if we're in fullscreen pause the video and exit fullscreen 
+	if ( document.webkitFullscreenElement || document.fullscreenElement || document.mozFullScreenElement || document.msFullscreenElement )
+	{
+		GamepadVideoPause( videoID );
+		GamepadVideoSetFullscreen( videoID, false );
+		return true; 
+	}
+
+	return false; // allow event to propagate
+}
+
+function GamepadVideoSetFullscreen( videoID, bFullscreen )
+{
+	// focus should be on a video element
+	var video = $J( '#' + GamepadVideoGetID( videoID ) )[0];
+	if ( !video )
+		return;
+
+	if ( bFullscreen )
+	{
+		if ( !document.webkitFullscreenElement && !document.fullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement )
+		{
+			if ( video.requestFullscreen ) {
+				video.requestFullscreen().catch( ( e ) => { console.error( "requestFullscreen exception:", e ); } );
+			} else if ( video.webkitRequestFullscreen ) { 
+				video.webkitRequestFullscreen().catch( ( e ) => { console.error( "webkitRequestFullscreen exception", e ); } );
+			} else if ( video.mozRequestFullScreen ) { 
+				video.mozRequestFullScreen().catch( ( e ) => { console.error( "mozRequestFullScreen exception", e ); } );
+			} else if ( video.msRequestFullscreen ) { 
+				video.msRequestFullscreen().catch( ( e ) => { console.error( "msRequestFullscreen exception", e ); } );
+			}
+		}
+	} 
+	else if ( document.webkitFullscreenElement || document.fullscreenElement || document.mozFullScreenElement || document.msFullscreenElement )
+	{
+		if ( document.exitFullscreen ) {
+			document.exitFullscreen().catch( ( e ) => { console.error( "exitFullscreen exception:", e ); } );
+		} else if ( document.webkitExitFullscreen ) { 
+			document.webkitExitFullscreen().catch( ( e ) => { console.error( "webkitExitFullscreen exception", e ); } );
+		} else if ( document.mozCancelFullScreen ) { 
+			document.mozCancelFullScreen().catch( ( e ) => { console.error( "mozCancelFullScreen exception", e ); } );
+		} else if ( document.msExitFullscreen ) { 
+			document.msExitFullscreen().catch( ( e ) => { console.error( "msRequestFullscreen exception", e ); } );
+		}
+
+		// make sure we scroll to the currently selected video
+		setTimeout( function () { video.scrollIntoView() }, 0 ); 
+	}
+}
+
+function GamepadVideoPause( videoID )
+{
+	var video = $J( '#' + GamepadVideoGetID( videoID ) )[0];
+	if ( video && !video.paused )
+		video.pause(); 
+}
+
+function GamepadVideoTogglePlay( videoID )
+{
+	var video = $J( '#' + GamepadVideoGetID( videoID ) )[0];
+	if ( !video )
+		return;
+
+	if ( video.paused )
+	{ 
+		video.play();
+		GamepadVideoSetFullscreen( videoID, true );
+	}
+	else 
+	{
+		video.pause(); 
+	}
+}
+function GamepadVideoToggleMute( videoID )
+{
+	var video = $J( '#' + GamepadVideoGetID( videoID ) )[0];
+	if ( video )
+		video.muted = !video.muted;
+}
+
+function AddRightNavStickyPaddingOnTablet()
+{
+	const elSticky = document.querySelector('.purchase_options_content_tablet' );
+	const observer = new IntersectionObserver(
+		([e]) => e.target.classList.toggle('isCurrentlySticky', e.isIntersecting ),
+		{threshold: [1]}
+	);
+	observer.observe( elSticky )
+}
+

@@ -1,0 +1,388 @@
+
+function UserReview_Award( bLoggedIn, loginURL, recommendationID, callbackFunc, selectedAward )
+{
+	if ( bLoggedIn )
+	{
+		fnLoyalty_ShowAwardModal( recommendationID, 1, callbackFunc, undefined, selectedAward );
+	}
+	else
+	{
+		var dialog = ShowConfirmDialog( '错误', '您必须登录后才能执行该操作。', '登录' );
+		dialog.done( function() {
+			top.location.href = loginURL;
+		} );
+	}
+}
+
+function UserReview_ShowMoreAwards( elem )
+{
+	elem = $J( elem );
+	var container = elem.closest( ".review_award_ctn" );
+	container.addClass( "show_all_awards" );
+}
+
+function UserReview_Rate( recommendationID, bRateUp, baseURL, callback )
+{
+	$J.post( baseURL + '/userreviews/rate/' + recommendationID,{
+				'rateup' : bRateUp,
+				'sessionid' : g_sessionID
+	}).done( function( results ) {
+		if ( results.success == 1 )
+		{
+			callback( results );
+		}
+		else if ( results.success == 21 )
+		{
+			ShowAlertDialog( '错误', '您必须登录后才能执行该操作。' );
+		}
+		else if ( results.success == 15 )
+		{
+			ShowAlertDialog( '错误', '您的帐户没有足够的权限执行此操作。' );
+		}
+		else if ( results.success == 24 )
+		{
+			ShowAlertDialog( '错误', '您的帐户不符合使用该功能的要求。<a class="whiteLink" href="https://help.steampowered.com/zh-cn/wizard/HelpWithLimitedAccount" target="_blank" rel="noreferrer">访问 Steam 客服</a>了解更多信息。' );
+		}
+		else
+		{
+			ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + results.success );
+		}
+	} );
+}
+
+function UserReview_VoteTag( recommendationID, tagID, bRateUp, baseURL, callback )
+{
+	$J.post( baseURL + '/userreviews/votetag/' + recommendationID,{
+		'tagid' : tagID,
+		'rateup' : bRateUp,
+		'sessionid' : g_sessionID
+	}).done( function( results ) {
+		if ( results.success == 1 )
+		{
+			callback( results );
+		}
+		else if ( results.success == 21 )
+		{
+			ShowAlertDialog( '错误', '您必须登录后才能执行该操作。' );
+		}
+		else if ( results.success == 15 )
+		{
+			ShowAlertDialog( '错误', '您的帐户没有足够的权限执行此操作。' );
+		}
+		else if ( results.success == 24 )
+		{
+			ShowAlertDialog( '错误', '您的帐户不符合使用该功能的要求。<a class="whiteLink" href="https://help.steampowered.com/zh-cn/wizard/HelpWithLimitedAccount" target="_blank" rel="noreferrer">访问 Steam 客服</a>了解更多信息。' );
+		}
+		else
+		{
+			ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + results.success );
+		}
+	} );
+}
+
+function UserReview_Report( recommendationID, baseURL, callback )
+{
+	var dialog = ShowPromptWithTextAreaDialog( '举报评测', '', null, null, 1000 );
+	var explanation = $J('<div/>', { 'class': 'user_review_report_dialog_explanation' } );
+	explanation.html( '请输入您举报该评测违反《Steam 订户协议》或《在线行为准则》的理由。该操作无法撤消。' );
+
+	var textArea = dialog.m_$Content.find( 'textarea' );
+	textArea.addClass( "user_review_report_dialog_text_area" );
+	textArea.parent().before( explanation );
+
+	dialog.done( function( note ) {
+		if ( !note )
+		{
+			return;
+		}
+		note = v_trim( note );
+		if ( note.length < 1 )
+		{
+			return;
+		}
+		$J.post( baseURL + '/userreviews/report/' + recommendationID, {
+					'reportnote' : note,
+					'sessionid' : g_sessionID
+		}).done( function( results ) {
+			if ( results.success == 1 )
+			{
+				callback( results );
+			}
+			else if ( results.success == 21 )
+			{
+				ShowAlertDialog( '错误', '##UserReviews_Error_NotLoggedIn_Text' );
+			}
+			else
+			{
+				ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + results.success );
+			}
+		} );
+	} );
+}
+
+function UserReview_ShowUpdateReviewDialog( recommendationID, existingText, baseURL )
+{
+	var dialog = ShowPromptWithTextAreaDialog( '更新您的评测', existingText, null, null, 4096 );
+
+	dialog.done( function( note ) {
+		if ( !note )
+		{
+			return;
+		}
+		note = v_trim( note );
+		if ( note.length < 1 )
+		{
+			return;
+		}
+		UserReview_Update_Text( recommendationID, note, baseURL, function( results ) { top.location.reload(); } );
+	} );
+}
+
+function UserReview_Update( recommendationID, params, baseURL, callback )
+{
+	params['sessionid'] = g_sessionID;
+	$J.post( baseURL + '/userreviews/update/' + recommendationID, params )
+	.done( function( results ) {
+		if ( results.success == 1 )
+		{
+			if ( callback )
+			{
+				callback( results );
+			}
+		}
+		else
+		{
+			ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + results.success );
+		}
+	} );
+}
+
+function UserReview_Update_Visibility( recommendationID, is_public, baseURL, callback )
+{
+	UserReview_Update( recommendationID, { 'is_public' : is_public }, baseURL, callback );
+}
+
+function UserReview_Update_Language( recommendationID, language, baseURL, callback )
+{
+	UserReview_Update( recommendationID, { 'language' : language }, baseURL, callback );
+}
+
+function UserReview_Update_CommentStatus( recommendationID, bCommentsDisabled, baseURL, callback )
+{
+	UserReview_Update( recommendationID, { 'comments_disabled' : bCommentsDisabled }, baseURL, callback );
+}
+
+function UserReview_Moderate( recommendationID, params, baseURL, callback )
+{
+	params['sessionid'] = g_sessionID;
+	$J.post( baseURL + '/userreviews/moderate/' + recommendationID, params )
+		.done( function( results ) {
+			if ( results.success != 1 )
+			{
+				var dialog = ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + results.success );
+				dialog.done( function() {
+					if ( callback )
+					{
+						callback( results );
+					}
+				} );
+			}
+			else
+			{
+				if ( callback )
+				{
+					callback( results );
+				}
+			}
+		} );
+}
+
+function UserReview_ClearDeveloperFlag( recommendationID, baseURL, callback )
+{
+	var dialog = ShowConfirmDialog( '清除开发者标记理由', '该评测已被开发者标记。您确定想要清除此状态吗？' );
+	dialog.done( function() {
+		$J.post( baseURL + '/userreviews/cleardeveloperflag/' + recommendationID, {'sessionid' : g_sessionID} )
+		.done( function( results ) {
+			if ( results.success == 1 )
+			{
+				if ( callback )
+				{
+					callback( results );
+				}
+			}
+			else
+			{
+				ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + results.success );
+			}
+		} );
+	});
+}
+
+function UserReview_SetDeveloperResponse( recommendationID, recommendation, baseURL, callback )
+{
+	var dialog = ShowPromptWithTextAreaDialog( '撰写一条回复', recommendation.developer_response, null, null, 8000 );
+	var explanation = $J('<div/>', { 'class': 'user_review_report_dialog_explanation' } );
+	explanation.html( '您可以选择以官方身份回复这篇评测。此回复对所有能看到这篇评测的用户可见，并将被标注为来自开发者。' );
+
+	var textArea = dialog.m_$Content.find( 'textarea' );
+	textArea.addClass( "user_review_report_dialog_text_area" );
+	textArea.parent().before( explanation );
+
+	dialog.done( function( note ) {
+		$J.post( baseURL + '/userreviews/setdeveloperresponse/' + recommendationID,{
+					'developer_response' : note,
+					'sessionid' : g_sessionID
+		}).done( function( results ) {
+			if ( results.success == 1 )
+			{
+				callback( results );
+			}
+			else
+			{
+				ShowAlertDialog( '错误', '在尝试处理您的请求的过程中出现了错误：' + results.success );
+			}
+		} );
+	} );
+}
+
+function UserReview_ShowReportsDialog( recommendationID, baseURL )
+{
+	$J.post( baseURL + '/userreviews/ajaxgetreports/' + recommendationID,{ 'sessionid' : g_sessionID } )
+	.done( function( results ) {
+		if ( results.success == 1 )
+		{
+			var container = $J('<div/>', {'class': 'review_reports' } );
+			var reports = results.reports;
+
+			{
+				var reportDiv = $J('<div/>', {'class': 'review_report header' } );
+				var divReporter = $J('<div/>', {'class': 'review_report_data' } ).append( 'Reporter' );
+				reportDiv.append( divReporter );
+				var divDescription = $J('<div/>', {'class': 'review_report_data description' } ).append( 'Report Description' );
+				reportDiv.append( divDescription );
+				var divWeight = $J('<div/>', {'class': 'review_report_data' } ).append( 'Weight' );
+				reportDiv.append( divWeight );
+				var divWasReset = $J('<div/>', {'class': 'review_report_data' } ).append( 'Cleared?' );
+				reportDiv.append( divWasReset );
+				var divTime = $J('<div/>', {'class': 'review_report_data' } ).append( 'Date' );
+				reportDiv.append( divTime );
+				var divReviewText = $J('<div/>', {'class': 'review_report_data review_text' } ).append( 'Review Text At Report Time' );
+				reportDiv.append( divReviewText );
+				var divClear = $J('<div/>', {'style': 'clear: left' } );
+				reportDiv.append( divClear );
+				container.append( reportDiv );
+			}
+
+			for ( var i = 0; i < reports.length; ++i )
+			{
+				var report = reports[i];
+
+				var reportDiv = $J('<div/>', {'class': 'review_report' } );
+					var divReporter = $J('<div/>', {'class': 'review_report_data' } ).append( $J('<a/>', {'href': report.reporter_url, 'text': report.reporter, 'target': '_blank' } ) );
+					reportDiv.append( divReporter );
+					var divDescription = $J('<div/>', {'class': 'review_report_data description' } ).append( report.description );
+					reportDiv.append( divDescription );
+					var divWeight = $J('<div/>', {'class': 'review_report_data' } ).append( report.weight );
+					reportDiv.append( divWeight );
+					var divWasReset = $J('<div/>', {'class': 'review_report_data' } ).append( report.was_reset ? 'Yes' : 'No' );
+					reportDiv.append( divWasReset );
+					var divTime = $J('<div/>', {'class': 'review_report_data' } ).append( report.time_string );
+					reportDiv.append( divTime );
+					var divReviewText = $J('<div/>', {'class': 'review_report_data review_text' } ).append( report.review_text );
+					reportDiv.append( divReviewText );
+					var divClear = $J('<div/>', {'style': 'clear: left' } );
+					reportDiv.append( divClear );
+				container.append( reportDiv );
+			}
+			var dialog = ShowAlertDialog( '清除举报', container );
+		}
+	} );
+}
+
+function UserReview_ShowContentCheckResultsDialog( recommendationID, baseURL )
+{
+	$J.get( baseURL + '/userreviews/ajaxgetcontentcheckresults/' + recommendationID )
+	.done( function( data ) {
+		if ( data.success == 1 )
+		{
+			var container = $J('<div/>', {'class': 'review_reports' } );
+
+			{
+				var reportDiv = $J('<div/>', {'class': 'review_report header' } );
+					var divProvider = $J('<div/>', {'class': 'review_report_data' } ).append( 'Provider' );
+					reportDiv.append( divProvider );
+					var divResult = $J('<div/>', {'class': 'review_report_data' } ).append( 'Result' );
+					reportDiv.append( divResult );
+					var divScore = $J('<div/>', {'class': 'review_report_data' } ).append( 'Score' );
+					reportDiv.append( divScore );
+					var divProviderResponse = $J('<div/>', {'class': 'review_report_data description' } ).append( 'Provider Response' );
+					reportDiv.append( divProviderResponse );
+					var divReviewText = $J('<div/>', {'class': 'review_report_data review_text' } ).append( 'Review Text At Eval Time' );
+					reportDiv.append( divReviewText );
+					var divTime = $J('<div/>', {'class': 'review_report_data' } ).append( 'Date' );
+					reportDiv.append( divTime );
+					var divClear = $J('<div/>', {'style': 'clear: left' } );
+					reportDiv.append( divClear );
+				container.append( reportDiv );
+			}
+
+			for ( var i = 0; i < data.results.length; ++i )
+			{
+				var r = data.results[i];
+				var reportDiv = $J('<div/>', {'class': 'review_report' } );
+					var divProvider = $J('<div/>', {'class': 'review_report_data' } ).append( r.provider == 1 || r.provider == 4 ? 'Google' : 'Unknown' );
+					reportDiv.append( divProvider );
+					var divResult = $J('<div/>', {'class': 'review_report_data' } ).append( r.ban_check_result_string );
+					reportDiv.append( divResult );
+					var divScore = $J('<div/>', {'class': 'review_report_data' } ).append( r.score );
+					reportDiv.append( divScore );
+					var divProviderResponse = $J('<div/>', {'class': 'review_report_data description' } ).append( r.provider_response );
+					reportDiv.append( divProviderResponse );
+					var divReviewText = $J('<div/>', {'class': 'review_report_data review_text' } ).append( r.review_text );
+					reportDiv.append( divReviewText );
+			var divTime = $J('<div/>', {'class': 'review_report_data' } ).append( r.timestamp_evaluated_string );
+			reportDiv.append( divTime );
+					var divClear = $J('<div/>', {'style': 'clear: left' } );
+					reportDiv.append( divClear );
+				container.append( reportDiv );
+			}
+			var dialog = ShowAlertDialog( '可疑内容检查结果', container );
+		}
+	} );
+}
+
+function UserReview_ShowClearReportsDialog( recommendationID, baseURL, callback )
+{
+	var dialog = ShowConfirmDialog( '清除举报', '您确定要清除所有举报吗？该操作不能撤消。' );
+	dialog.done( function() {
+		UserReview_Moderate( recommendationID, { 'clear_reports' : 1 }, baseURL, callback);
+	});
+}
+
+function UserReview_ShowVoteBanUsersDialog( recommendationID, baseURL, callback )
+{
+	var dialog = ShowConfirmDialog( '禁止用户投票', '您确定要禁止赞过此评测的用户投票吗？此操作无法撤销！<br><br>只有在此评测具有可疑内容时才应使用此操作。' );
+	dialog.done( function() {
+		UserReview_Moderate_VoteBanUsers( recommendationID, baseURL, callback);
+	});
+}
+
+function UserReview_Moderate_SetBanStatus( recommendationID, force_hidden, baseURL, callback, strModerationNote )
+{
+	UserReview_Moderate( recommendationID, { 'force_hidden' : force_hidden, 'moderation_note' : strModerationNote }, baseURL, callback );
+}
+
+function UserReview_Moderate_SetDeveloperFlag( recommendationID, flagged_by_developer, baseURL, callback )
+{
+	UserReview_Moderate( recommendationID, { 'flagged_by_developer' : flagged_by_developer }, baseURL, callback );
+}
+
+function UserReview_Moderate_SetQuality( recommendationID, quality, baseURL, callback )
+{
+	UserReview_Moderate( recommendationID, { 'review_quality' : quality }, baseURL, callback );
+}
+
+function UserReview_Moderate_VoteBanUsers( recommendationID, baseURL, callback )
+{
+	UserReview_Moderate( recommendationID, { 'vote_ban_users' : 1 }, baseURL, callback );
+}

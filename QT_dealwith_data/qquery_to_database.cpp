@@ -2,6 +2,7 @@
 
 void analysis_reviews(Brief_information_of_game* one,QString Good);
 QString analysis_os(QString os);
+QString analysis_language(QString language);
 /*----------------------------------------------Translation----------------------------------------------*/
 void Translation::put_lable(QString s)
 {
@@ -51,18 +52,16 @@ QString Translation::get_lable()
 
 }
 
-/*----------------------------------------------User----------------------------------------------*/
-
-QSqlQuery* User::get_query()
+/*----------------------------------------------HUser----------------------------------------------*/
+QSqlQuery* HUser::get_query()
 {
     return &query;
 }
-QSqlDatabase* User::get_connect_to_steam()
+QSqlDatabase* HUser::get_connect_to_steam()
 {
     return &connect_to_steam;
 }
-
-User::User()
+HUser::HUser()
 {
     connect_to_steam = QSqlDatabase::addDatabase("QODBC");
     //connect_to_steam.setHostName("114.116.248.95");
@@ -75,18 +74,18 @@ User::User()
     query=QSqlQuery(connect_to_steam);
     connect_to_steam.open();
 
-    query.exec(transaction_begin);
-    query.exec("create procedure one(out sum int)\n"
-               "begin set sum = LAST_INSERT_ID(); end;");
-    query.exec(transaction_submission);
+    // query.exec(transaction_begin);
+    // query.exec("create procedure one(out sum int)\n"
+    //            "begin set sum = LAST_INSERT_ID(); end;");
+    // query.exec(transaction_submission);
 }
 
-User::~User()
+HUser::~HUser()
 {
     connect_to_steam.close();
 }
 
-int User::user_log_in(QString user_account1,QString user_password1)
+int HUser::user_log_in(QString user_account1,QString user_password1)
 {
     query.exec(transaction_begin);
 
@@ -122,8 +121,19 @@ int User::user_log_in(QString user_account1,QString user_password1)
     return 2;
 }
 
-int User::user_register(QString user_account,QString user_password,QString user_gender,QString user_email)
+int HUser::user_register(QString user_account,QString user_password,QString user_gender,QString user_email)
 {
+
+    QRegularExpression regex("^[a-zA-Z0-9]{8,18}$");
+
+    QRegularExpressionMatch match = regex.match(user_account);
+
+    if (!match.hasMatch()) return 3;
+
+    QRegularExpressionMatch match1 = regex.match(user_password);
+
+    if (!match1.hasMatch()) return 4;
+
     query.exec(transaction_begin);
 
     QString a="select count(*) from user where user_account=:user_account and user_status!=-1;";
@@ -137,8 +147,8 @@ int User::user_register(QString user_account,QString user_password,QString user_
         return 1;
     }
 
-    QString user_register_sql = "insert into user(user_account,user_password,user_gender,user_email) \n"
-                                "value(:user_account,:user_password,:user_gender,:user_email);";
+    QString user_register_sql = "insert into user (user_account,user_password,user_gender,user_email) \n"
+                                "values(:user_account,:user_password,:user_gender,:user_email);";
     query.prepare(user_register_sql);
     query.bindValue(":user_account",user_account);
     query.bindValue(":user_password",user_password);
@@ -158,7 +168,7 @@ int User::user_register(QString user_account,QString user_password,QString user_
     }
 }
 
-int User::user_log_out(int user_id)
+int HUser::user_log_out(int user_id)
 {
     query.exec(transaction_begin);
     QString user_log_out_sql = "update user set user_status=-1 where user_id=:user_id";
@@ -177,7 +187,7 @@ int User::user_log_out(int user_id)
     }
 }
 
-int User::user_change_information(int user_id,QString user_password,QString user_gender,QString user_email)
+int HUser::user_change_information(int user_id,QString user_password,QString user_gender,QString user_email)
 {
     QString user_change_information_sql="update user set user_password=:user_password,\n"
                                           "user_gender=:user_gender,\n"
@@ -193,47 +203,47 @@ int User::user_change_information(int user_id,QString user_password,QString user
 }
 
 
-QString User::get_user_information()
+QString HUser::get_user_information()
 {
 
     return  "<user_id>"+QString::number(user_id)+"</user_id>"+
-            "<user_account>"+user_account+"</user_account>"+
-            "<user_password>"+user_password+"</user_password>"+
-            "<user_gender>"+user_gender+"</user_gender>"+
-            "<user_email>"+user_email+"</user_email>";
+           "<user_account>"+user_account+"</user_account>"+
+           "<user_password>"+user_password+"</user_password>"+
+           "<user_gender>"+user_gender+"</user_gender>"+
+           "<user_email>"+user_email+"</user_email>";
 }
 
-int User::get_user_id()
+int HUser::get_user_id()
 {
     return user_id;
 }
 
-QString User::get_user_account()
+QString HUser::get_user_account()
 {
     return user_account;
 }
 
-QString User::get_user_password()
+QString HUser::get_user_password()
 {
     return user_password;
 }
 
-QString User::get_user_gender()
+QString HUser::get_user_gender()
 {
     return user_gender;
 }
 
-QString User::get_user_email()
+QString HUser::get_user_email()
 {
     return user_email;
 }
 
-std::vector<QString> User::get_user_tag()
+std::vector<QString> HUser::get_user_tag()
 {
     query.exec(transaction_begin);
     QString get_user_tag_sql =  "select tag_name from tag,\n"
-                                "(select tag_id from user_to_tag where user_id=:user_id) as a\n"
-                                "where tag.tag_id=a.tag_id order by tag_times desc";
+                               "(select tag_id from user_to_tag where user_id=:user_id) as a\n"
+                               "where tag.tag_id=a.tag_id order by tag_times desc";
     query.prepare(get_user_tag_sql);
     query.bindValue(":user_id",user_id);
     query.exec();
@@ -246,7 +256,7 @@ std::vector<QString> User::get_user_tag()
     return tag_list;
 }
 
-std::vector<QString> User::get_query_tag()
+std::vector<QString> HUser::get_query_tag()
 {
     std::vector<QString> tag_list=get_user_tag();
     int need=10-tag_list.size();
@@ -264,7 +274,7 @@ std::vector<QString> User::get_query_tag()
     return tag_list;
 }
 
-std::vector<QPair<QString,QString>> User::get_user_query_record()
+std::vector<QPair<QString,QString>> HUser::get_user_query_record()
 {
     query.exec(transaction_begin);
     QString get_user_query_record_sql = "select query_content,query_time from query_record,\n"
@@ -282,7 +292,7 @@ std::vector<QPair<QString,QString>> User::get_user_query_record()
     return query_record_list;
 }
 
-std::vector<std::vector<QString>> User::get_user_content()
+std::vector<std::vector<QString>> HUser::get_user_content()
 {
     query.exec(transaction_begin);
     QString get_user_content_sql = "select content_content,content_date,c.game_name,c.AppID from content,\n"
@@ -311,7 +321,7 @@ std::vector<std::vector<QString>> User::get_user_content()
     return content_list;
 }
 
-int User::insert_user_qurty_information(QString label)
+int HUser::insert_user_qurty_information(QString label)
 {
     query.exec(transaction_begin);
     QString insert_user_qurty_information="insert into query_record(query_time, query_content) value(:curdate,:label);";
@@ -349,7 +359,7 @@ int User::insert_user_qurty_information(QString label)
     return 0;
 }
 
-int User::add_user_label(QString label,int appid)
+int HUser::add_user_label(QString label,int appid)
 {
     query.exec(transaction_begin);
 
@@ -392,7 +402,7 @@ int User::add_user_label(QString label,int appid)
     return 1;
 }
 
-int User::delete_user_label(QString label_name)
+int HUser::delete_user_label(QString label_name)
 {
     query.exec(transaction_begin);
 
@@ -443,10 +453,7 @@ int User::delete_user_label(QString label_name)
 
 }
 
-
-//--------------------------------------------------------------------------------------------------------------
-
-
+/*----------------------------------------------Qquery_to_database----------------------------------------------*/
 
 //初始化
 Qquery_to_database::Qquery_to_database()
@@ -507,7 +514,7 @@ void Qquery_to_database::initialization()
 }
 
 //连接数据库
-bool Qquery_to_database::connection(User* user)
+bool Qquery_to_database::connection(HUser* user)
 {
     // connect_to_stream = QSqlDatabase::addDatabase("QODBC");
     // connect_to_stream->setHostName("127.0.0.1");
@@ -520,6 +527,7 @@ bool Qquery_to_database::connection(User* user)
 
     query=user->get_query();
     connect_to_stream=user->get_connect_to_steam();
+    return true;
 }
 
 
@@ -563,9 +571,8 @@ int Qquery_to_database::main_query(QString label,int user_id)
     query->exec(transaction_begin);
 
 
-    query->exec("select tag_id from tag where tag_name = :label and user_id=:user_id;");
+    query->prepare("select tag_id from tag where tag_name = :label;");
     query->bindValue(":label",label);
-    query->bindValue(":user_id",user_id);
     query->exec();
     if(query->numRowsAffected()==0)
     {
@@ -578,7 +585,7 @@ int Qquery_to_database::main_query(QString label,int user_id)
         main_query_sql=  "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date\n"
                          "from game,\n"
                          "(select distinct AppID from game_to_tag,\n"
-                         "(select tag_id from tag where tag_name = :label and user_id=:user_id) as a\n"
+                         "(select tag_id from tag where tag_name = :label) as a\n"
                          "where a.tag_id=game_to_tag.tag_id) as b\n"
                          "where b.AppID=game.AppID;";
         query->prepare(main_query_sql);
@@ -689,10 +696,11 @@ bool Qquery_to_database::ranking_query(int index,QString date)
 
     else if(index==1)
     {
-        for(auto a:(brief_information_of_game_list[1])) std::free(a);
+        for(auto a:(brief_information_of_game_list[2])) std::free(a);
         std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[2]);
 
         time=QDate::fromString(date, "yyyy-MM-dd").addDays(1-QDate::fromString(date, "yyyy-MM-dd").day());
+        qDebug()<<time.toString("yyyy-MM-dd");
         ranking_query_sql = "select game.AppID,game_name,os,game_intro_img,All_reviews,Old_price,New_price,issue_date from game,\n"
                             "(select AppID from month_rank where Date=:time) as a\n"
                             "where a.AppID=game.AppID;";
@@ -704,7 +712,7 @@ bool Qquery_to_database::ranking_query(int index,QString date)
 
     else if(index==2)
     {
-        for(auto a:(brief_information_of_game_list[1])) std::free(a);
+        for(auto a:(brief_information_of_game_list[3])) std::free(a);
         std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[3]);
 
         time=QDate::fromString(date, "yyyy-MM-dd").addDays(1-QDate::fromString(date, "yyyy-MM-dd").dayOfYear());
@@ -741,16 +749,13 @@ bool Qquery_to_database::new_product_query()
     return true;
 }
 
-bool Qquery_to_database::preferential_query(QString discount)
+bool Qquery_to_database::preferential_query()
 {
-    QString disc;
-    for(auto a:discount)
-    {
-        if('0'<=a and a<='9') disc.append(a);
-    }
-    double dis=disc.toDouble()/100;
-    query->clear();
+
     size_of_preferential_query=0;
+
+    for(auto a:(brief_information_of_game_list[7])) std::free(a);
+    std::vector<Brief_information_of_game*>().swap(brief_information_of_game_list[7]);
 
     query->exec(transaction_begin);
 
@@ -758,12 +763,11 @@ bool Qquery_to_database::preferential_query(QString discount)
                              "FROM `game`\n"
                              "WHERE\n"
                              "CAST(SUBSTRING_INDEX(`new_price`, 'S$', -1) AS DECIMAL(10, 2)) <=\n"
-                             ":discount * CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2))\n"
+                             "0.5 * CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2))\n"
                              "ORDER BY\n"
                              "CAST(SUBSTRING_INDEX(`new_price`, 'S$', -1) AS DECIMAL(10, 2)) /\n"
                              "CAST(SUBSTRING_INDEX(`old_price`, 'S$', -1) AS DECIMAL(10, 2)) ASC;";
     query->prepare(preferential_query_sql);
-    query->bindValue(":discount",dis);
     query->exec();
     create_information_of_game(7);
     query->exec(transaction_submission);
@@ -959,10 +963,23 @@ void analysis_reviews(Brief_information_of_game* one,QString Good)
 QString analysis_os(QString os)
 {
     QString OS="";
-    if(os.contains("Windows")) OS+="/Windows";
+    if(os.contains("Win")) OS+="/Windows";
     if(os.contains("Mac")) OS+="/Mac";
     if(os.contains("Linux")) OS+="/Linux";
     return OS;
+}
+QString analysis_language(QString language)
+{
+    language.replace(" ", "");
+    language.replace("\n","");
+    QString sup_language="";
+    QRegularExpression regex("left\">(.*?)<");
+    QRegularExpressionMatchIterator matches = regex.globalMatch(language);
+    while (matches.hasNext()) {
+        QRegularExpressionMatch match = matches.next();
+        sup_language+="/"+ match.captured(1);
+    }
+    return sup_language;
 }
 void Qquery_to_database::create_information_of_game(int index)
 {
@@ -977,8 +994,15 @@ void Qquery_to_database::create_information_of_game(int index)
         one->shelves_time=query->value("issue_date").toDate();
         one->date=one->shelves_time.toString("yyyy-MM-dd");
         analysis_reviews(one,query->value("All_reviews").toString());
-        one->new_price=query->value("New_price").toString().remove("S$").toDouble();
-        one->old_price=query->value("Old_price").toString().remove("S$").toDouble();
+        // int leftBracketIndex = query->value("New_price").toString().indexOf("(");
+        // int rightBracketIndex = query->value("New_price").toString().indexOf(")");
+        // one->new_price=query->value("New_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
+        // leftBracketIndex = query->value("Old_price").toString().indexOf("(");
+        // rightBracketIndex = query->value("Old_price").toString().indexOf(")");
+        // one->old_price=query->value("Old_price").toString().mid(leftBracketIndex + 1, rightBracketIndex - leftBracketIndex - 1).toDouble();
+
+        one->new_price=query->value("New_price").toString().remove("HK$ ").toDouble();
+        one->old_price=query->value("Old_price").toString().remove("HK$ ").toDouble();
         int discount=(one->old_price-one->new_price)*100/one->old_price;
         one->discount="-"+QString::number(discount)+"%";
         one->discount_rate=discount*1.0/100;
@@ -1175,4 +1199,5 @@ std::vector<Brief_information_of_game> Qquery_to_database::get_preferential_quer
     return a;
 }
 
-/*----------------------------------------------Qquery_to_database----------------------------------------------*/
+/*----------------------------------------------Qquery_to_database--------------------------------*/
+

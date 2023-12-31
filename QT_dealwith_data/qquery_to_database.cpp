@@ -53,6 +53,20 @@ QString Translation::get_lable()
 }
 
 /*----------------------------------------------HUser----------------------------------------------*/
+
+int HUser::test()
+{
+    query.exec(transaction_begin);
+    QString delete_content_sql="delete from content where content_id=11229";
+    query.prepare(delete_content_sql);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+
+    }
+    query.exec(transaction_submission);
+}
+
 QSqlQuery* HUser::get_query()
 {
     return &query;
@@ -458,7 +472,6 @@ int HUser::delete_user_label(QString label_name)
 int HUser::add_user_content(QString content,int appid)
 {
     query.exec(transaction_begin);
-
     QString date="Posted: "+QString::number(QDate::currentDate().day())+" "+QDate::currentDate().toString("MMMM");
     QString add_user_content_sql="insert into content(content_content,content_date) value(:content,:date);";
     query.prepare(add_user_content_sql);
@@ -480,6 +493,7 @@ int HUser::add_user_content(QString content,int appid)
         query.exec(transaction_rollback);
         return 0;
     }
+    qDebug()<<content_id;
     QString add_content_to_user_sql="insert into content_to_user(user_id, content_id) VALUE(:user_id,:content_id);";
     query.prepare(add_content_to_user_sql);
     query.bindValue(":user_id",user_id);
@@ -506,47 +520,52 @@ int HUser::add_user_content(QString content,int appid)
 
 int HUser::delete_user_content(QString content)
 {
-//     query.exec(transaction_begin);
+    query.exec(transaction_begin);
+    int content_id;
+    QString get_content_id_sql="select a.content_id from content,\n"
+                                 "(select content_id from content_to_user where user_id=:user_id) as a\n"
+                                 "where content.content_id=a.content_id and content.content_content=:content;";
+    query.prepare(get_content_id_sql);
+    query.bindValue(":content",content);
+    query.bindValue(":user_id",user_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    query.next();
+    content_id=query.value(0).toInt();
 
-//     int content_id;
-//     QString get_content_id_sql="select content_id from content where user_id=:user_id and content =:content;";
-//     query.prepare(get_content_id_sql);
-//     query.bindValue(":user_id",user_id);
-//     query.bindValue(":content",content);
-//     if(!query.exec())
-//     {
-//         query.exec(transaction_rollback);
-//         return 0;
-//     }
-//     query.next();
-//     content_id=query.value(0).toInt();
+    QString delete_content_to_user_sql="delete from content_to_user where content_id=:content_id";
+    query.prepare(delete_content_to_user_sql);
+    query.bindValue(":content_id",content_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    qDebug()<<content_id;
+    QString delete_content_to_game_sql="delete from content_to_game where content_id=:content_id";
+    query.prepare(delete_content_to_game_sql);
+    query.bindValue(":content_id",content_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
+    qDebug()<<content_id;
+    QString delete_content_sql="delete from content where content_id=:content_id";
+    query.prepare(delete_content_sql);
+    query.bindValue(":content_id",content_id);
+    if(!query.exec())
+    {
+        query.exec(transaction_rollback);
+        return 0;
+    }
 
-//     QString delete_content_to_user_sql="delete from content_to_user where content_id=:content_id";
-//     query.prepare(delete_content_to_user_sql);
-//     query.bindValue(":content_id",content_id);
-//     if(!query.exec())
-//     {
-//         query.exec(transaction_rollback);
-//         return 0;
-//     }
-//     QString delete_content_to_game_sql="delete from content_to_game where content_id=:content_id";
-//     query.prepare(delete_content_to_game_sql);
-//     query.bindValue(":tag_id",tag_id);
-//     if(!query.exec())
-//     {
-//         query.exec(transaction_rollback);
-//         return 0;
-//     }
-//     QString delete_user_label_sql="delete from tag where tag_id=:tag_id";
-//     query.prepare(delete_user_label_sql);
-//     query.bindValue(":tag_id",tag_id);
-//     if(!query.exec())
-//     {
-//         query.exec(transaction_rollback);
-//         return 0;
-//     }
-//     query.exec(transaction_submission);
-// }
+    query.exec(transaction_submission);
+    return 1;
+}
 /*----------------------------------------------Qquery_to_database----------------------------------------------*/
 
 //初始化
